@@ -7,47 +7,47 @@ Funcionalidade: Gerar relatório do Administrador
 
     Contexto:
         Dado que estou logado como Administrador
-        E estou na página de resultados de um formulário de avaliação
+        E estou na página "Gerenciamento"
+        E clico no botão "Resultados"
     
   # ==================== CENÁRIOS FELIZES ====================
 
-    Cenário: Download do CSV com resultados de um formulário preenchido
-        Dado que o formulário "Avaliação Engenharia de Software - 2026.1" possui respostas registradas
-        Quando clico no botão "Baixar CSV"
-        Então um arquivo CSV é baixado com o nome "relatorio_engenharia_software_2026_1.csv"
-        E o arquivo contém as colunas "Turma", "Discente", "Docente", "Questão", "Resposta"
-        E cada linha corresponde a uma resposta submetida
-    
-    Cenário: Download do CSV com resultados filtrados por turma
-        Dado que o formulário "Avaliação Engenharia de Software - 2026.1" possui respostas de múltiplas turmas
-        Quando seleciono a turma "Turma 01 - Engenharia de Software (2026.1)"
+    Cenário: Visualizar listagem de turmas com resultados disponíveis
+        Então vejo uma listagem de cards com turmas
+        E cada card exibe o "Nome da matéria", o "semestre" e o "Professor"
+
+    Cenário: Download do CSV com resultados de uma turma
+        Dado que a turma "Engenharia de Software - 2026.1 - Prof. Genaina" possui respostas registradas
+        Quando clico no card da turma "Engenharia de Software - 2026.1 - Prof. Genaina"
         E clico no botão "Baixar CSV"
-        Então um arquivo CSV é baixado contendo apenas respostas da turma selecionada
-        E o arquivo não contém respostas de outras turmas
-    
-    Cenário: Download do CSV contendo todos os campos do formulário
-        Dado que o formulário "Avaliação Engenharia de Software - 2026.1" possui questões de múltiplos tipos
-        Quando clico no botão "Baixar CSV"
+        Então um arquivo CSV é baixado com os resultados da turma selecionada
+        E o arquivo contém as colunas "Turma", "Discente", "Questão" e "Resposta"
+        E cada linha corresponde a uma resposta submetida por um discente
+
+    Cenário: Download do CSV contendo todos os tipos de resposta do formulário
+        Dado que a turma "Engenharia de Software - 2026.1 - Prof. Genaina" possui respostas de questões do tipo Radio e Texto
+        Quando clico no card da turma "Engenharia de Software - 2026.1 - Prof. Genaina"
+        E clico no botão "Baixar CSV"
         Então o arquivo CSV baixado contém uma coluna para cada questão do formulário
-        E os valores de cada coluna correspondem às respostas dos discentes
+        E os valores correspondem às respostas selecionadas ou digitadas pelos discentes
 
   # ==================== CENÁRIOS TRISTES ====================
 
-    Cenário: Tentativa de download de CSV de formulário sem respostas
-        Dado que o formulário "Avaliação Engenharia de Software - 2026.1" não possui nenhuma resposta registrada
-        Quando clico no botão "Baixar CSV"
+    Cenário: Tentativa de download de CSV de turma sem respostas registradas
+        Dado que a turma "Software Básico - 2026.1 - Prof. Ladeira" não possui nenhuma resposta registrada
+        Quando clico no card da turma "Software Básico - 2026.1 - Prof. Ladeira"
+        E clico no botão "Baixar CSV"
         Então nenhum arquivo é baixado
-        E vejo a mensagem de aviso "Este formulário ainda não possui respostas registradas"
+        E vejo a mensagem de aviso "Esta turma ainda não possui respostas registradas"
 
-    Cenário: Tentativa de acesso à geração de relatório por usuário não administrador
-        Dado que estou logado como User
-        Quando tento acessar a página de resultados de um formulário de avaliação
+    Cenário: Nenhuma turma disponível na tela de Resultados
+        Dado que nenhum formulário foi enviado para nenhuma turma
+        Quando acesso "Gerenciamento - Resultados"
+        Então vejo a mensagem "Nenhum resultado disponível"
+        E nenhum card de turma é exibido
+
+    Cenário: Tentativa de acesso à tela de Resultados por usuário não administrador
+        Dado que estou logado como Discente
+        Quando tento acessar a página "Gerenciamento - Resultados"
         Então sou redirecionado para o painel do usuário
         E vejo a mensagem de erro "Acesso não autorizado"
-
-    Cenário: Erro ao gerar CSV por falha interna
-        Dado que o formulário "Avaliação Engenharia de Software - 2026.1" possui respostas registradas
-        E o sistema está com falha no serviço de exportação
-        Quando clico no botão "Baixar CSV"
-        Então nenhum arquivo é baixado
-        E vejo a mensagem de erro "Não foi possível gerar o relatório. Tente novamente"
