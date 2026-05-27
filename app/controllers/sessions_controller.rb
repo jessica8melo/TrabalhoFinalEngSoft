@@ -6,13 +6,18 @@ class SessionsController < ApplicationController
   end
 
   def create
+    if params[:login].blank? || params[:password].blank?
+      flash.now[:alert] = "Preencha todos os campos obrigatórios"
+      return render :new, status: :unprocessable_entity
+    end
+
     user = User.find_by_login(params[:login])
 
     if user&.authenticate(params[:password])
       session[:user_id] = user.id
-      redirect_to root_path, notice: 'Login realizado com sucesso'
+      redirect_to root_path, notice: "Login realizado com sucesso"
     else
-      flash.now[:alert] = 'Credenciais inválidas'
+      flash.now[:alert] = "Credenciais inválidas"
       render :new, status: :unprocessable_entity
     end
   end
