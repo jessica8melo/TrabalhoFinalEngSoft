@@ -1,0 +1,32 @@
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="menu-icon">☰</div>
+      <span class="title">
+        <% if current_user&.admin? %>
+          Gerenciamento
+        <% else %>
+          Avaliações
+        <% end %>
+      </span>
+    </div>
+
+    <div class="header-right">
+        <input type="text" placeholder="Buscar..." class="search" />
+        <div class="user-avatar">U</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="menu-item">Avaliações</div>
+    <% if current_user&.admin? %>
+      <div class="menu-item">Gerenciamento</div>
+    <% end %>
+  </aside>
+
+  <!-- CONTEÚDO DINÂMICO -->
+  <main class="main">
+    <%= yield %>
+  </main>
+</body>

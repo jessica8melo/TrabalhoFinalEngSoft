@@ -10,6 +10,11 @@ body {
   margin: 0;
 }
 
+.flash-text {
+  position: absolute;
+  left: -9999px;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

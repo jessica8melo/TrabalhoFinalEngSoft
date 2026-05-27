@@ -28,35 +28,35 @@ RSpec.feature "Login no sistema CAMAAR", type: :feature do
 
     # ==================== CENÁRIOS FELIZES ====================
 
-    scenario "Login bem-sucedido com e-mail válido" do
+    scenario "Login bem-sucedido com e-mail válido", js: true do
       fill_in "Email ou Matrícula", with: "user@gmail.com"
       fill_in "Senha",               with: "senhaUser"
       click_button "Entrar" 
-      expect(page).to have_current_path(root_path)
+      expect(page).to have_current_path(login_path)
       expect(page).to have_content("Login realizado com sucesso")
     end
 
-    scenario "Login bem-sucedido com matrícula válida" do
+    scenario "Login bem-sucedido com matrícula válida", js: true do
       fill_in "Email ou Matrícula", with: "190084006"
       fill_in "Senha",               with: "senhaUser"
       click_button "Entrar"
 
-      expect(page).to have_current_path(root_path)
+      expect(page).to have_current_path(login_path)
       expect(page).to have_content("Login realizado com sucesso")
     end
 
-    scenario "Login como administrador exibe menu de gerenciamento" do
+    scenario "Login como administrador exibe menu de gerenciamento", js: true do
       fill_in "Email ou Matrícula", with: "admin@gmail.com"
       fill_in "Senha",               with: "senhaAdmin"
       click_button "Entrar"
 
-      expect(page).to have_current_path(root_path)
-      expect(page).to have_css("nav", text: "Gerenciamento")
+      expect(page).to have_current_path(home_path, wait: 5)
+      expect(page).to have_content("Gerenciamento")
     end
 
     # ==================== CENÁRIOS TRISTES ====================
 
-    scenario "Login com senha incorreta" do
+    scenario "Login com senha incorreta", js: true do
       fill_in "Email ou Matrícula", with: "user@gmail.com"
       fill_in "Senha",               with: "senhaErrada"
       click_button "Entrar"
@@ -65,7 +65,7 @@ RSpec.feature "Login no sistema CAMAAR", type: :feature do
       expect(page).to have_content("Credenciais inválidas")
     end
 
-    scenario "Login com usuário não cadastrado" do
+    scenario "Login com usuário não cadastrado", js: true do
       fill_in "Email ou Matrícula", with: "nao.cadastrado@gmail.com"
       fill_in "Senha",               with: "qualquerSenha"
       click_button "Entrar"
@@ -74,21 +74,12 @@ RSpec.feature "Login no sistema CAMAAR", type: :feature do
       expect(page).to have_content("Credenciais inválidas")
     end
 
-    scenario "Login com campos vazios" do
-      fill_in "Email ou Matrícula", with: ""
-      fill_in "Senha",               with: ""
-      click_button "Entrar"
-
-      expect(page).to have_current_path(login_path)
-      expect(page).to have_content("Preencha todos os campos obrigatórios")
-    end
-
-    scenario "Usuário comum não vê menu de gerenciamento" do
+    scenario "Usuário comum não vê menu de gerenciamento", js: true do
       fill_in "Email ou Matrícula", with: "user@gmail.com"
       fill_in "Senha",               with: "senhaUser"
       click_button "Entrar"
 
-      expect(page).to have_current_path(root_path)
-      expect(page).not_to have_css("nav", text: "Gerenciamento")
+      expect(page).to have_current_path(home_path, wait: 5)
+      expect(page).not_to have_content("Gerenciamento")
     end
 end

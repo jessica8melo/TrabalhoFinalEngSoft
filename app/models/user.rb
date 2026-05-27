@@ -9,4 +9,8 @@ class User < ApplicationRecord
     def self.find_by_login(login)
         find_by(email: login) || find_by(matricula: login)
     end
+
+    def admin?
+        role == "admin"
+    end
 end

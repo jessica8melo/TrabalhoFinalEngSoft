@@ -15,7 +15,8 @@ class SessionsController < ApplicationController
 
     if user&.authenticate(params[:password])
       session[:user_id] = user.id
-      redirect_to root_path, notice: "Login realizado com sucesso"
+      flash[:notice] = "Login realizado com sucesso!"
+      redirect_to login_path
     else
       flash.now[:alert] = "Credenciais inválidas"
       render :new, status: :unprocessable_entity

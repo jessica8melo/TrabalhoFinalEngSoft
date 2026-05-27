@@ -1,0 +1,111 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* HEADER */
+.header {
+  height: 60px;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #6C2365;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.search {
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  padding: 8px 15px;
+}
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 257px;
+  height: calc(100% - 60px);
+  background: white;
+}
+
+.menu-item {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.menu-item.active {
+  background: #6C2365;
+  color: white;
+}
+
+/* MAIN */
+.main {
+  margin-left: 257px;
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+  background: #DBDBDB;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD */
+.card {
+  background: white;
+  width: 460px;
+  height: 650px;
+  border-radius: 8px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+/* BOTÕES */
+.btn {
+  width: 300px;
+  height: 43px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.primary {
+  background: #22C55E;
+  color: white;
+}
+
+.secondary {
+  background: #86EFAC;
+  color: white;
+}
