@@ -60,13 +60,9 @@ group :development do
 end
 
 group :test do
-  # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+  gem 'rspec-rails'
+  gem 'cucumber-rails', require: false
+  gem 'database_cleaner'
   gem "capybara"
   gem "selenium-webdriver"
-end
-
-group :test do
-  gem 'cucumber-rails', require: false
-  # database_cleaner is not mandatory, but highly recommended
-  gem 'database_cleaner'
 end
