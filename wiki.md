@@ -1,4 +1,4 @@
-# 📚 Wiki — Sprint 1
+# 📚 Wiki — Sprint 2
 ## TrabalhoFinalEngSoft | CAMAAR — Sistema de Avaliação Acadêmica
 
 ---
