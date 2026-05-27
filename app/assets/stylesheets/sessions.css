@@ -1,4 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
 body {
+  font-family: 'Poppins', sans-serif;
   background-color: #e0e0e0;
   display: flex;
   justify-content: center;
@@ -9,7 +12,7 @@ body {
 
 .login-wrapper {
   display: flex;
-  width: 750px;
+  width: 800px;
   border-radius: 12px;
   overflow: hidden;
   background: white;
@@ -21,38 +24,34 @@ body {
   padding: 60px 40px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
 }
 
 .login-left h1 {
   font-size: 1.8rem;
-  font-weight: normal;
+  font-weight: 600;
   text-align: center;
-  letter-spacing: 2px;
-}
-
-.form {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 20px;
+  letter-spacing: 3px;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  margin-top: 20px;
 }
 
 .field label {
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .field input {
   border: 1px solid #ccc;
   border-radius: 8px;
-  padding: 14px 16px;
-  font-size: 0.95rem;
+  padding: 16px 18px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
   outline: none;
 }
 
@@ -65,11 +64,14 @@ input[type="submit"] {
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 16px;
+  padding: 18px;
   font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
   cursor: pointer;
-  width: 100%;
-  margin-top: 8px;
+  display: block;
+  width: 60%;
+  margin: 20px auto 0;
 }
 
 input[type="submit"]:hover {
@@ -88,13 +90,13 @@ input[type="submit"]:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 40px;
+  padding: 0px;
 }
 
-.login-right p {
+.login-right h2 {
   color: white;
   font-size: 2.5rem;
-  font-weight: bold;
+  font-weight: 600;
   text-align: center;
   line-height: 1.3;
 }
