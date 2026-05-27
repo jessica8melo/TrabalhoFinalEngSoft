@@ -13,11 +13,15 @@
 
     <div class="header-right">
         <input type="text" placeholder="Buscar..." class="search" />
-        <div class="user-avatar">U</div>
+        <div class="user-avatar-wrapper">
+          <div class="user-avatar" onclick="toggleUserMenu()">U</div>
+          <div class="user-menu" id="userMenu">
+            <%= button_to "Logout", logout_path, method: :delete, class: "logout-btn" %>
+          </div>
+        </div>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="menu-item">Avaliações</div>
     <% if current_user&.admin? %>
@@ -25,7 +29,6 @@
     <% end %>
   </aside>
 
-  <!-- CONTEÚDO DINÂMICO -->
   <main class="main">
     <%= yield %>
   </main>

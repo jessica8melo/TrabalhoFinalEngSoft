@@ -1,24 +1,24 @@
 <body>
-    <% if flash[:notice] || flash[:alert] %>
-        <div class="modal-overlay">
-            <div class="modal">
-                 <p class="<%= flash[:notice] ? 'notice' : 'flash-alert' %>">
-                    <%= flash[:notice] || flash[:alert] %>
-                </p>
-                <script>
-                  setTimeout(() => {
-                    const modal = document.querySelector('.modal-overlay');
-                    if (modal) modal.remove();
-                  }, 3000);
-                </script>
-            </div>
+    <% if flash[:notice] || flash[:alert] || flash[:logout] %>
+      <div class="modal-overlay">
+        <div class="modal">
+          <p class="<%= flash[:notice] ? 'notice' : 'flash-alert' %>">
+            <%= flash[:notice] || flash[:alert] || flash[:logout] %>
+          </p>
+          <script>
+            setTimeout(() => {
+              const modal = document.querySelector('.modal-overlay');
+              if (modal) modal.remove();
+            }, 3000);
+          </script>
         </div>
-
-        <% if flash[:notice] %>
-            <script>
-                setTimeout(() => {window.location.href = "<%= home_path %>";}, 1500);
-            </script>
-        <% end %>
+      </div>
+    
+      <% if flash[:notice] %> <%# só redireciona no login bem-sucedido %>
+        <script>
+          setTimeout(() => { window.location.href = "<%= home_path %>"; }, 1500);
+        </script>
+      <% end %>
     <% end %>
 
     <div class="login-wrapper">
