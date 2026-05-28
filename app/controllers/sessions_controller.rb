@@ -6,11 +6,6 @@ class SessionsController < ApplicationController
   end
 
   def create
-    if params[:login].blank? || params[:password].blank?
-      flash.now[:alert] = "Preencha todos os campos obrigatórios"
-      return render :new, status: :unprocessable_entity
-    end
-
     user = User.find_by_login(params[:login])
 
     if user&.authenticate(params[:password])
