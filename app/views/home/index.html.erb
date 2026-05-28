@@ -1,0 +1,35 @@
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="menu-icon">☰</div>
+      <span class="title">
+        <% if current_user&.admin? %>
+          Gerenciamento
+        <% else %>
+          Avaliações
+        <% end %>
+      </span>
+    </div>
+
+    <div class="header-right">
+        <input type="text" placeholder="Buscar..." class="search" />
+        <div class="user-avatar-wrapper">
+          <div class="user-avatar" onclick="toggleUserMenu()">U</div>
+          <div class="user-menu" id="userMenu">
+            <%= button_to "Logout", logout_path, method: :delete, class: "logout-btn" %>
+          </div>
+        </div>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="menu-item">Avaliações</div>
+    <% if current_user&.admin? %>
+      <div class="menu-item">Gerenciamento</div>
+    <% end %>
+  </aside>
+
+  <main class="main">
+    <%= yield %>
+  </main>
+</body>
