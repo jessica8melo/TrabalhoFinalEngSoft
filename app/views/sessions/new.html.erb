@@ -1,9 +1,9 @@
 <body>
-    <% if flash[:notice] || flash[:alert] || flash[:logout] %>
+    <% if flash[:notice] || flash[:alert] || flash[:logout] || flash[:success]%>
       <div class="modal-overlay">
         <div class="modal">
-          <p class="<%= flash[:notice] ? 'notice' : 'flash-alert' %>">
-            <%= flash[:notice] || flash[:alert] || flash[:logout] %>
+          <p class="<%= flash[:notice] || flash[:success] ? 'notice' : 'flash-alert' %>">
+            <%= flash[:notice] || flash[:alert] || flash[:logout] || flash[:success] %>
           </p>
           <script>
             setTimeout(() => {

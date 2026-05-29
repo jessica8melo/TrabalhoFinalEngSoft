@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
     validates :email, uniqueness: true, allow_blank: false
     validates :matricula, uniqueness: true, allow_blank: false
-    validates :password, length: { minimum: 6 }
+    validates :password, length: { minimum: 8 }, if: :password_required?
     validates :role, inclusion: { in: %w[admin discente docente] }
 
     def self.find_by_login(login)
@@ -11,6 +11,26 @@ class User < ApplicationRecord
     end
 
     def admin?
-        role == "admin"
+      role == "admin"
+    end
+
+    def generate_invitation_token!
+      self.invitation_token   = SecureRandom.urlsafe_base64(32)
+      self.invitation_sent_at = Time.current
+      save!(validate: false)
+    end
+
+    def invitation_token_expired?
+      invitation_sent_at.nil? || invitation_sent_at < 24.hours.ago
+    end
+
+    def consume_invitation_token!
+      update_columns(invitation_token: nil, invitation_sent_at: nil)
+    end
+
+    private
+
+    def password_required?
+        password.present? || password_confirmation.present?
     end
 end
