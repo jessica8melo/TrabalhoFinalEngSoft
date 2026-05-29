@@ -3,9 +3,11 @@ class UserMailer < ApplicationMailer
   #
   # Uso (no controller de cadastro de usuários, feature #3):
   #
-  #   user = User.create!(email: params[:email], role: "discente", ...)
+  #   user = User.create!(email: params[:email], matricula: params[:matricula], role: "discente")
   #   user.generate_invitation_token!
   #   UserMailer.invitation(user).deliver_later
+  #
+  # Não é necessário informar senha no cadastro — o usuário a define pelo link enviado.
   #
   def invitation(user)
     @user = user
