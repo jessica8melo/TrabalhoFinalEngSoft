@@ -29,6 +29,20 @@ class User < ApplicationRecord
     update_columns(invitation_token: nil, invitation_sent_at: nil)
   end
 
+  def generate_reset_token!
+    self.reset_token   = SecureRandom.urlsafe_base64(32)
+    self.reset_sent_at = Time.current
+    save!(validate: false)
+  end
+
+  def reset_token_expired?
+    reset_sent_at.nil? || reset_sent_at < 24.hours.ago
+  end
+
+  def consume_reset_token!
+    update_columns(reset_token: nil, reset_sent_at: nil)
+  end
+
   private
 
   def password_being_set?

@@ -78,8 +78,8 @@ O CAMAAR é um sistema web desenvolvido em Ruby on Rails para a gestão de avali
 **Regras de Negócio:**
 - Apenas usuários com perfil **admin** podem realizar o cadastro de participantes de turmas
 - Em caso de erro no processo, o sistema deve exibir mensagem indicando o problema
-- Para criar um usuário válido, deve-se colocar o email ou matrícula e uma senha
-- A senha do usuário deve ter pelo menos 6 caracteres
+- Para criar um usuário válido, deve-se colocar o email ou matrícula — a senha é definida pelo próprio usuário via link de convite enviado por e-mail
+- A senha do usuário deve ter pelo menos 8 caracteres
 
 ---
 
@@ -141,6 +141,11 @@ O CAMAAR é um sistema web desenvolvido em Ruby on Rails para a gestão de avali
 - Usuários com perfil admin visualizam a opção "Gerenciamento" no menu lateral
 - Usuários com perfil discente/docente não visualizam o menu de gerenciamento
 
+**Detalhes de implementação:**
+- A página de Login é a primeira página que o usuário visualiza ao acessar o sistema
+- Mensagens de sucesso (Login realizado com sucesso!) e de erro (Credenciais inválidas) são exibidas em um modal temporário para o usuário
+- Ao ter login realizado com sucesso, o usuário é redirecionado para a página de Home, em que admins visualizam a opção "Gerenciamento" no menu lateral, mas usuários com perfil discente/docente não.
+
 ---
 
 ### 🔑 #8 — Sistema de Definição de Senha
@@ -155,8 +160,13 @@ O CAMAAR é um sistema web desenvolvido em Ruby on Rails para a gestão de avali
 - O link de definição de senha é enviado por e-mail após o cadastro
 - O link expira em 24 horas
 - O link só pode ser utilizado uma única vez
-- A senha deve ter no mínimo 6 caracteres
+- A senha deve ter no mínimo 8 caracteres
 - Os campos "Nova Senha" e "Confirmar Senha" devem ser idênticos
+
+**Detalhes de implementação:**
+- O admin cadastra o usuário apenas com email, matrícula e role — sem senha
+- O sistema gera um token de convite e envia o email automaticamente via Gmail SMTP
+- O usuário acessa o link e define sua própria senha
 
 ---
 
@@ -188,10 +198,18 @@ O CAMAAR é um sistema web desenvolvido em Ruby on Rails para a gestão de avali
 
 **Regras de Negócio:**
 
-- O usuário solicita a redefinição informando seu e-mail ou matrícula
+- O usuário solicita a redefinição clicando em "Esqueci minha senha" na tela de login
+- O usuário informa seu e-mail ou matrícula
 - Um link de redefinição é enviado para o e-mail cadastrado
 - O link expira em 24 horas
-- A nova senha não pode ser igual à senha anterior
+- O link só pode ser utilizado uma única vez
+- A senha deve ter no mínimo 8 caracteres
+- Os campos "Nova Senha" e "Confirmar Senha" devem ser idênticos
+
+**Detalhes de implementação:**
+- Reutiliza o mesmo visual e lógica da tela de definição de senha (#8)
+- O sistema não revela se o email/matrícula existe ou não (segurança)
+- Token de redefinição independente do token de convite
 
 ---
 
@@ -289,9 +307,9 @@ Regras de Negócio:
 - O formulário deve ser criado a partir de um template
 - O formulário deve ser atríbuido a uma ou várias turmas de um mesmo departamento
 
+---
 
-
-## 📈 Velocity — Story Points da Sprint 1
+## 📈 Velocity — Story Points da Sprint 2
 
 | Issue | Funcionalidade | Story Points | Status |
 |-------|---------------|:------------:|--------|
@@ -301,10 +319,10 @@ Regras de Negócio:
 | #4 | Gerar relatório do administrador | 3 | 🔲 A fazer |
 | #5 | Gerar Template de Formulário | 8 | 🔲 A fazer |
 | #6 | Gerar Formulário de Avaliação | 5 | 🔲 A fazer |
-| #7 | Sistema de Login | 3 | 🔲 A fazer |
-| #8 | Sistema de Definição de Senha | 3 | 🔲 A fazer |
+| #7 | Sistema de Login | 3 | ✅ Feito |
+| #8 | Sistema de Definição de Senha | 3 | ✅ Feito |
 | #9 | Gerenciamento por Departamento | 8 | 🔲 A fazer |
-| #10 | Redefinição de Senha | 2 | 🔲 A fazer |
+| #10 | Redefinição de Senha | 2 | ✅ Feito |
 | #11 | Atualizar Base com SIGAA | 8 | 🔲 A fazer |
 | #12 | Visualização de Formulários | 3 | 🔲 A fazer |
 | #13 | Visualização de Resultados | 3 | 🔲 A fazer |
@@ -312,7 +330,7 @@ Regras de Negócio:
 | #15 | Edição e Deleção de Templates | 3 | 🔲 A fazer |
 | #16 | Criação de Formulário Docente/Discente | 5 | 🔲 A fazer |
 | | **Total da Sprint** | **69** | |
-| | **Velocity (concluídos)** | **0** | _atualizar ao fim da sprint_ |
+| | **Velocity (concluídos)** | **8** | #7 + #8 + #10 |
 
 > 💡 **O que é Velocity?** É a soma dos story points das histórias **concluídas** ao final da sprint. Ao fim da Sprint 2, atualize a coluna "Status" e some apenas os pontos das histórias entregues. Esse número será a velocity de referência para planejar a Sprint 3.
 
@@ -324,7 +342,7 @@ O grupo adota o seguinte fluxo de branches:
 
 ```
 main
-└── sprint-1
+└── sprint-2
     ├── feature/#7-login
     ├── feature/#8-definicao-senha
     ├── feature/#10-redefinicao-senha
@@ -353,10 +371,9 @@ git commit -m "Implementa sistema de login closes #7"
 
 ### Pull Requests
 
-- PRs de `feature/*` vão para `sprint-1`
-- PRs de `sprint-1` vão para `main` ao fim da sprint
-- Toda PR precisa de pelo menos **1 aprovação** de outro integrante antes do merge
+- PRs de `feature/*` vão para `sprint-2`
+- PRs de `sprint-2` vão para `main` ao fim da sprint
 
 ---
 
-_Última atualização: Sprint 1 — 2026.1_
+_Última atualização: Sprint 2 — 2026.1_
