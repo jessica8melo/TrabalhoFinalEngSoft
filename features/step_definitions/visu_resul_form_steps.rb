@@ -2,20 +2,8 @@
 
 # ==================== CONTEXTO ====================
 
-Dado('que estou logado como Administrador') do
-  @admin_user = User.create!(
-    email:                 'admin@gmail.com',
-    matricula:             '000000000',
-    password:              'senhaAdmin',
-    password_confirmation: 'senhaAdmin',
-    role:                  'admin'
-  )
-  
-  visit login_path
-  fill_in 'email', with: 'admin@gmail.com'
-  fill_in 'password', with: 'senhaAdmin'
-  click_button 'Entrar'
-end
+# Removed duplicate auth step
+
 
 Dado('estou na página {string}') do |pagina|
   case pagina

@@ -19,4 +19,8 @@ class ApplicationController < ActionController::Base
     current_user&.role == "admin"
   end
   helper_method :admin?
+
+  def require_admin
+    redirect_to home_path, alert: "Você não tem permissão para acessar esta página." unless admin?
+  end
 end
