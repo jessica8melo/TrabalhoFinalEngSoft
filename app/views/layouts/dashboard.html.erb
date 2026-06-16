@@ -57,7 +57,7 @@
     <aside class="sidebar">
       <%= link_to "Avaliações", formularios_path, class: "menu-item" %>
       <% if current_user&.admin? %>
-        <div class="menu-item">Gerenciamento</div>
+        <%= link_to "Gerenciamento", admin_imports_path, class: "menu-item" %>
       <% end %>
     </aside>
 
