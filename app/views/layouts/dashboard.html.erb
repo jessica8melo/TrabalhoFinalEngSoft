@@ -29,6 +29,17 @@
         border-radius: 4px;
         background: #eee;
       }
+      .menu-item {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+      .menu-item:hover {
+        background: #f5f5f5;
+      }
       .alert {
         padding: 12px;
         margin-bottom: 16px;
@@ -57,11 +68,17 @@
     <aside class="sidebar">
       <%= link_to "Avaliações", formularios_path, class: "menu-item" %>
       <% if current_user&.admin? %>
-        <div class="menu-item">Gerenciamento</div>
+        <%= link_to "Gerenciamento", admin_imports_path, class: "menu-item" %>
       <% end %>
     </aside>
 
     <main class="main">
+      <% if flash[:notice] %>
+        <div class="alert alert-success"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:alert] %>
+        <div class="alert alert-danger"><%= flash[:alert] %></div>
+      <% end %>
       <%= yield %>
     </main>
   </body>

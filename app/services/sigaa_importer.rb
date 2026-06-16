@@ -60,6 +60,7 @@ class SigaaImporter
           User.find_or_create_by!(matricula: d_data['matricula']) do |u|
             u.email = d_data['email']
             u.role = 'discente'
+            u.generate_invitation_token!
           end
         end
 
@@ -76,6 +77,7 @@ class SigaaImporter
           User.find_or_create_by!(matricula: doc_data['usuario']) do |u|
             u.email = doc_data['email']
             u.role = 'docente'
+            u.generate_invitation_token!
           end
         end
       end

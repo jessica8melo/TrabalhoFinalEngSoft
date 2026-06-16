@@ -17,15 +17,6 @@ Dado('que estou logado como Participante') do
   click_button 'Entrar'
 end
 
-Dado('estou na página {string}') do |pagina|
-  case pagina
-  when 'Avaliações'
-    visit avaliacoes_path
-  else
-    visit '/'
-  end
-end
-
 Então('vejo uma seção com os formulários não respondidos das minhas turmas') do
   expect(page).to have_selector('.formularios-nao-respondidos')
 end
@@ -312,9 +303,7 @@ Dado('que estou visualizando um formulário não respondido') do
   click_button 'Responder'
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('sou redirecionado para a página de preenchimento do formulário') do
   expect(page).to have_current_path(responder_form_path(@form), wait: 10)
