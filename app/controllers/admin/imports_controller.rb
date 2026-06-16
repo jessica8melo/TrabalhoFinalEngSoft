@@ -1,4 +1,5 @@
 class Admin::ImportsController < ApplicationController
+  layout 'dashboard'
   before_action :require_admin
   
   def index

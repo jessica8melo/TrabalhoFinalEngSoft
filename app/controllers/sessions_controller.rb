@@ -12,6 +12,8 @@ class SessionsController < ApplicationController
       session[:user_id] = user.id
       flash[:notice] = "Login realizado com sucesso!"
       redirect_to home_path
+    elsif user && user.password_digest.nil? && user.invitation_token.present?
+      redirect_to password_set_path(user.invitation_token), notice: "Este é seu primeiro acesso. Por favor, defina uma senha."
     else
       flash.now[:alert] = "Credenciais inválidas"
       render :new, status: :unprocessable_entity

@@ -32,7 +32,8 @@ class PasswordSetsController < ApplicationController
     end 
     if @user.update(password: nova_senha, password_confirmation: confirmacao)
       @user.consume_invitation_token!
-        redirect_to login_path, flash: { success: "Senha definida com sucesso. Faça seu login." }    
+      session[:user_id] = @user.id
+      redirect_to home_path, notice: "Cadastro efetivado com sucesso!"
     else
       flash.now[:alert] = @user.errors.full_messages.first
       render :new, status: :unprocessable_entity

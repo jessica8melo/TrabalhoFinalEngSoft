@@ -12,7 +12,11 @@ class ApplicationController < ActionController::Base
   helper_method :current_user
 
   def require_login
-    redirect_to login_path, alert: "Faça login para continuar." unless current_user
+    if current_user.nil?
+      redirect_to login_path, alert: "Faça login para continuar."
+    elsif current_user.password_digest.nil? && current_user.invitation_token.present?
+      redirect_to password_set_path(current_user.invitation_token), notice: "Você precisa definir uma senha antes de continuar"
+    end
   end
 
   def admin?
@@ -21,6 +25,8 @@ class ApplicationController < ActionController::Base
   helper_method :admin?
 
   def require_admin
-    redirect_to home_path, alert: "Você não tem permissão para acessar esta página." unless admin?
+    unless admin?
+      redirect_to root_path, alert: "Acesso restrito a administradores."
+    end
   end
 end
