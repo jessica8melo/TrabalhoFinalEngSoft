@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   has_secure_password validations: false
 
+  has_many :respostas, dependent: :destroy
+
   validates :email, uniqueness: true, allow_blank: false
   validates :matricula, uniqueness: true, allow_blank: false
   validates :role, inclusion: { in: %w[admin discente docente] }
@@ -13,6 +15,32 @@ class User < ApplicationRecord
 
   def admin?
     role == "admin"
+  end
+
+  def discente?
+    role == "discente"
+  end
+
+  def docente?
+    role == "docente"
+  end
+
+  def profile
+    @profile ||= if discente?
+                   Discente.where(matricula: matricula)
+                 elsif docente?
+                   Docente.where(usuario: matricula)
+                 end
+  end
+
+  def turmas
+    if discente?
+      Turma.where(id: Discente.where(matricula: matricula).select(:turma_id))
+    elsif docente?
+      Turma.where(id: Docente.where(usuario: matricula).select(:turma_id))
+    else
+      []
+    end
   end
 
   def generate_invitation_token!

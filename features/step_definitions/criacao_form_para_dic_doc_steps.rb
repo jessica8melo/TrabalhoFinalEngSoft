@@ -110,7 +110,7 @@ Então('o formulário fica disponível para os docentes da turma {string}') do |
   expect(Form.last.classes.pluck(:code)).to include(turma)
 end
 
-Então('vejo a mensagem de sucesso {string} para ({int}) turmas') do |mensagem, quantidade|
+Então('vejo a mensagem de sucesso {string} para {int} turmas') do |mensagem, quantidade|
   expect(page).to have_content(mensagem)
   expect(page).to have_content(quantidade)
 end
