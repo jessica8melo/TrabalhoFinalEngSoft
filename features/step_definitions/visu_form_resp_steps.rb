@@ -407,7 +407,7 @@ Então('vejo um resumo no topo da página') do
   expect(page).to have_selector('.resumo-avaliacoes')
 end
 
-Então('vejo a informação {{string}}') do |informacao|
+Então('vejo a informação {string}') do |informacao|
   expect(page).to have_content(informacao)
 end
 
@@ -415,16 +415,16 @@ Então('vejo um percentual de progresso') do
   expect(page).to have_selector('.progress-percentage')
 end
 
-Então('vejo a aba {{string}} selecionada por padrão') do |aba|
+Então('vejo a aba {string} selecionada por padrão') do |aba|
   expect(page).to have_selector(".nav-tabs .active", text: aba)
 end
 
-Então('vejo a aba {{string}} com formulários salvos como rascunho') do |aba|
+Então('vejo a aba {string} com formulários salvos como rascunho') do |aba|
   click_link aba
   expect(page).to have_selector('.form-card')
 end
 
-Então('vejo a aba {{string}} com formulários já submetidos') do |aba|
+Então('vejo a aba {string} com formulários já submetidos') do |aba|
   click_link aba
   expect(page).to have_selector('.form-card')
 end
@@ -464,7 +464,7 @@ Dado('que respondeu todos os formulários das suas turmas') do
   )
 end
 
-Então('vejo a mensagem {{string}}') do |mensagem|
+Então('vejo a mensagem {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
@@ -472,7 +472,7 @@ Então('a lista está vazia') do
   expect(page).not_to have_selector('.form-card')
 end
 
-Então('vejo o botão {{string}}') do |botao|
+Então('vejo o botão {string}') do |botao|
   expect(page).to have_button(botao)
 end
 
@@ -500,11 +500,11 @@ Quando('abro o link de um formulário da turma {string} em que não estou matric
   visit responder_form_path(@other_form)
 end
 
-Então('vejo a mensagem de erro {{string}}') do |mensagem|
+Então('vejo a mensagem de erro {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
-Então('sou redirecionado para a página {{string}}') do |pagina|
+Então('sou redirecionado para a página {string}') do |pagina|
   case pagina
   when 'Avaliações'
     expect(page).to have_current_path(avaliacoes_path, wait: 10)
@@ -534,11 +534,11 @@ Então('o formulário expirado não aparece na lista') do
   expect(page).not_to have_content('Avaliação Expirada')
 end
 
-Então('vejo a mensagem {{string}}') do |mensagem|
+Então('vejo a mensagem {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
-Então('vejo um botão {{string}}') do |botao|
+Então('vejo um botão {string}') do |botao|
   expect(page).to have_button(botao)
 end
 
@@ -565,17 +565,17 @@ Então('não consigo acessar o formulário') do
   expect(page).not_to have_selector('.questao')
 end
 
-Quando('acesso a página {{string}} e o servidor retorna erro') do |pagina|
+Quando('acesso a página {string} e o servidor retorna erro') do |pagina|
   # Simula erro no servidor
   allow(Form).to receive(:for_user).and_raise(StandardError)
   visit avaliacoes_path
 end
 
-Então('vejo a mensagem de erro {{string}}') do |mensagem|
+Então('vejo a mensagem de erro {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
-Então('vejo um botão {{string}}') do |botao|
+Então('vejo um botão {string}') do |botao|
   expect(page).to have_button(botao)
 end
 
@@ -607,11 +607,11 @@ Quando('a conexão com o servidor é perdida') do
   allow(page).to receive(:current_path).and_raise(Capybara::CapybaraError)
 end
 
-Então('vejo a mensagem {{string}}') do |mensagem|
+Então('vejo a mensagem {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
-Então('o botão {{string}} é exibido') do |botao|
+Então('o botão {string} é exibido') do |botao|
   expect(page).to have_button(botao)
 end
 
@@ -665,7 +665,7 @@ Dado('que estava preenchendo um formulário') do
   fill_in 'Questão 1', with: 'Minha resposta'
 end
 
-Quando('fecho a aba do navegador sem clicar em {{string}}') do |acao|
+Quando('fecho a aba do navegador sem clicar em {string}') do |acao|
   # Simula fechamento sem salvar
   @saved = false
 end
@@ -674,7 +674,7 @@ Quando('abro novamente o formulário') do
   visit responder_form_path(@form)
 end
 
-Então('vejo a mensagem {{string}}') do |mensagem|
+Então('vejo a mensagem {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
@@ -702,7 +702,7 @@ Dado('que estou preenchendo um formulário') do
   visit responder_form_path(@form)
 end
 
-Quando('clico em {{string}} e o servidor retorna erro') do |acao|
+Quando('clico em {string} e o servidor retorna erro') do |acao|
   # Simula erro no servidor ao salvar
   allow(FormResponse).to receive(:create!).and_raise(StandardError)
   click_button acao
@@ -755,7 +755,7 @@ Quando('tento salvar outro formulário como rascunho') do
   click_button 'Salvar como Rascunho'
 end
 
-Então('vejo a mensagem {{string}}') do |mensagem|
+Então('vejo a mensagem {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 

@@ -2,19 +2,8 @@
 
 # ==================== CONTEXTO ====================
 
-Dado('que estou logado como Administrador') do
-  @user = User.create!(
-    email:                 'admin@gmail.com',
-    matricula:             '000000000',
-    password:              'senhaAdmin',
-    password_confirmation: 'senhaAdmin',
-    role:                  'admin'
-  )
-  visit login_path
-  fill_in 'email', with: 'admin@gmail.com'
-  fill_in 'password', with: 'senhaAdmin'
-  click_button 'Entrar'
-end
+# Removed duplicate auth step
+
 
 Dado('estou na página {string}') do |pagina|
   case pagina
@@ -110,7 +99,7 @@ Então('o formulário fica disponível para os docentes da turma {string}') do |
   expect(Form.last.classes.pluck(:code)).to include(turma)
 end
 
-Então('vejo a mensagem de sucesso {string} para ({int}) turmas') do |mensagem, quantidade|
+Então('vejo a mensagem de sucesso {string} para {int} turmas') do |mensagem, quantidade|
   expect(page).to have_content(mensagem)
   expect(page).to have_content(quantidade)
 end
