@@ -148,3 +148,10 @@ body {
   background: #86EFAC;
   color: white;
 }
+.alert {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 4px;
+}
+.alert-success { background: #d4edda; color: #155724; }
+.alert-danger { background: #f8d7da; color: #721c24; }
