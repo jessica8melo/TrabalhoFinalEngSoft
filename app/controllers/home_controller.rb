@@ -1,7 +1,11 @@
 class HomeController < ApplicationController
   before_action :require_login
+  layout "dashboard"
 
   def index
+    if current_user.discente? || current_user.docente?
+      redirect_to formularios_path
+    end
   end
 
   private
