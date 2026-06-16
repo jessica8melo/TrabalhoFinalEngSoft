@@ -55,7 +55,11 @@ Então('sou redirecionado para a página de cadastro {string}') do |pagina|
     user = User.find_by(matricula: @current_matricula || '190084006')
     expect(page.current_path).to include("/definir-senha/")
   when 'painel principal'
-    expect(page).to have_current_path(home_path)
+    if @user&.discente? || @user&.docente?
+      expect(page).to have_current_path(formularios_path)
+    else
+      expect(page).to have_current_path(home_path)
+    end
   end
 end
 

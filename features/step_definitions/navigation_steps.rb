@@ -6,5 +6,7 @@ Dado('estou na página de {string}') do |pagina|
     visit admin_imports_path
   when 'página de login'
     visit login_path
+  when 'Avaliações'
+    visit formularios_path
   end
 end
