@@ -30,9 +30,7 @@ Quando('preencho o campo {string} com {string}') do |campo, valor|
   fill_in campo, with: valor
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 # ==================== VERIFICAÇÕES ====================
 

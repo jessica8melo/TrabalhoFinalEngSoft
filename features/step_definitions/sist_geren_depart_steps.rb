@@ -20,20 +20,7 @@ Dado('que estou logado como Administrador do departamento {string}') do |departa
   click_button 'Entrar'
 end
 
-Dado('estou na página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento'
-    visit admin_dashboard_path
-  when 'Gerenciamento - Turmas'
-    visit admin_classes_path
-  else
-    visit '/'
-  end
-end
-
-Dado('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('sou redirecionado para a página {string}') do |pagina|
   case pagina
@@ -121,9 +108,7 @@ Dado('que estou visualizando os detalhes da turma {string}') do |codigo_turma|
   visit admin_class_path(@class)
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('um formulário é exibido com os dados atuais da turma') do
   expect(page).to have_selector('form')
@@ -145,9 +130,7 @@ Então('a turma {string} agora exibe {string}') do |codigo_turma, valor|
   expect(page).to have_content(valor)
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('um modal é exibido com a lista de dicentes matriculados') do
   expect(page).to have_selector('.modal')
@@ -181,9 +164,7 @@ Dado('que existem formulários enviados para a turma {string}') do |codigo_turma
   @form.classes << @class
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('vejo um painel com gráficos de desempenho') do
   expect(page).to have_selector('.chart, .graph, svg')
