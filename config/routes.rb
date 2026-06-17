@@ -16,6 +16,11 @@ Rails.application.routes.draw do
   get  'definir-senha/:token', to: 'password_sets#new',    as: 'password_set'
   patch 'definir-senha/:token', to: 'password_sets#update'
 
+  resources :templates
+
+  post "/sigaa/update",
+     to: "sigaa#update_database"
+
   namespace :admin do
     resources :imports, only: [:index, :create]
   end
