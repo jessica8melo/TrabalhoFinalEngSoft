@@ -4,21 +4,10 @@
 
 # Removed duplicate auth step
 
+# Removed duplicate navigation step
 
-Dado('estou na página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento'
-    visit admin_dashboard_path
-  when 'Gerenciamento - Resultados'
-    visit admin_results_path
-  else
-    visit '/'
-  end
-end
+# Removed duplicate click step
 
-Dado('clico no botão {string}') do |botao|
-  click_button botao
-end
 
 Então('sou redirecionado para a página {string}') do |pagina|
   case pagina
@@ -350,9 +339,7 @@ Dado('que abri os detalhes de um formulário') do
   click_button 'Ver Detalhes'
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('um arquivo com as respostas do formulário é baixado') do
   expect(page.response_headers['Content-Disposition']).to include('attachment')
@@ -570,9 +557,7 @@ Então('sou redirecionado para a página {string}') do |pagina|
   end
 end
 
-Quando('clico no botão {string}') do |botao|
-  click_button botao
-end
+# Removed duplicate click step
 
 Então('a tabela permanece sem aplicar o filtro') do
   expect(page).to have_selector('table')

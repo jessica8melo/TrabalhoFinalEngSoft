@@ -2,27 +2,8 @@
 
 # ==================== CONTEXTO ====================
 
-# Removed duplicate auth step
+# Removed duplicate navigation step
 
-
-Dado('estou na página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento'
-    visit admin_forms_path
-  when 'Gerenciamento - Formulários Ativos'
-    visit admin_forms_path
-  when 'Gerenciamento - Turmas'
-    visit admin_classes_path
-  when 'Gerenciamento - Resultados'
-    visit admin_results_path
-  else
-    visit "/"
-  end
-end
-
-Dado('clico no botão {string}') do |botao|
-  click_button botao
-end
 
 Então('um modal é exibido com os campos {string}, {string}, {string} e data de disponibilidade') do |campo1, campo2, campo3|
   expect(page).to have_selector('.modal')

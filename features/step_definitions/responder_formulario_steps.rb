@@ -42,15 +42,6 @@ Dado('existe um formulário pendente para esta turma') do
   )
 end
 
-Dado('estou na página de {string}') do |page_name|
-  case page_name
-  when 'Avaliações'
-    visit formularios_path
-  else
-    # default
-  end
-end
-
 Quando('clico no botão {string} do formulário da turma {string}') do |botao, turma_code|
   # Encontrar o formulário da turma
   formulario = Formulario.joins(:turma).find_by(turmas: { classCode: turma_code })
