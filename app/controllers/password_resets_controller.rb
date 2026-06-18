@@ -53,7 +53,9 @@ class PasswordResetsController < ApplicationController
 
     if @user.update(password: nova_senha, password_confirmation: confirmacao)
       @user.consume_reset_token!
-      redirect_to login_path, flash: { success: "Senha redefinida com sucesso. Faça seu login." }
+      session[:user_id] = @user.id
+      @user.consume_reset_token!
+      redirect_to home_path    
     else
       flash.now[:alert] = @user.errors.full_messages.first
       render :edit, status: :unprocessable_entity

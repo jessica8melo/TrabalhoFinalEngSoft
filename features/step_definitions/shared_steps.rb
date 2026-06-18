@@ -19,3 +19,7 @@ end
 Então('vejo o botão {string}') do |botao|
   expect(page).to have_button(botao)
 end
+
+Então('vejo a mensagem {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
+end

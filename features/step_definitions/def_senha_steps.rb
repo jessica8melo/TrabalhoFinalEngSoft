@@ -29,10 +29,6 @@ Então('sou redirecionado para a página de login') do
   expect(page).to have_current_path(login_path, wait: 5)
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('permaneço na página de definição de senha') do
   expect(page).to have_current_path(password_set_path(@user.invitation_token), wait: 5)
 end

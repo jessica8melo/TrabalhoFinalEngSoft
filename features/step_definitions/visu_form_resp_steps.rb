@@ -246,10 +246,6 @@ Quando('visualizo o card do formulário') do
   visit avaliacoes_path
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o card exibe uma barra de progresso de tempo em cor verde') do
   expect(page).to have_selector('.progress-bar.verde')
 end
@@ -336,10 +332,6 @@ end
 
 Quando('preencho algumas questões') do
   fill_in 'Questão 1', with: 'Resposta 1'
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('sou redirecionado para a lista de formulários') do
@@ -449,10 +441,6 @@ Dado('que respondeu todos os formulários das suas turmas') do
   )
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('a lista está vazia') do
   expect(page).not_to have_selector('.form-card')
 end
@@ -509,10 +497,6 @@ end
 
 Então('o formulário expirado não aparece na lista') do
   expect(page).not_to have_content('Avaliação Expirada')
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('vejo um botão {string}') do |botao|
@@ -580,10 +564,6 @@ Quando('a conexão com o servidor é perdida') do
   allow(page).to receive(:current_path).and_raise(Capybara::CapybaraError)
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o botão {string} é exibido') do |botao|
   expect(page).to have_button(botao)
 end
@@ -645,10 +625,6 @@ end
 
 Quando('abro novamente o formulário') do
   visit responder_form_path(@form)
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('o formulário começa vazio novamente') do
@@ -726,10 +702,6 @@ Quando('tento salvar outro formulário como rascunho') do
   
   visit responder_form_path(@new_form)
   click_button 'Salvar como Rascunho'
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('preciso deletar um rascunho anterior') do

@@ -470,10 +470,6 @@ Então('a tabela está vazia') do
   expect(page).not_to have_selector('table tbody tr')
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o botão {string} não está disponível') do |botao|
   expect(page).not_to have_button(botao)
 end
@@ -517,10 +513,6 @@ end
 Então('não vejo os botões {string} ou {string}') do |botao1, botao2|
   expect(page).not_to have_button(botao1)
   expect(page).not_to have_button(botao2)
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Dado('que um formulário foi deletado do sistema') do
@@ -584,10 +576,6 @@ end
 
 Então('o gráfico não é exibido') do
   expect(page).not_to have_selector('canvas, svg')
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Quando('clico no botão {string} e a exportação falha') do |botao|

@@ -208,10 +208,6 @@ Então('vejo a mensagem de aviso {string}') do |mensagem|
   expect(page).to have_content(mensagem)
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('nenhum card de turma é exibido') do
   expect(page).not_to have_selector('.turma-card')
 end
