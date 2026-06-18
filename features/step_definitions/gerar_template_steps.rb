@@ -107,10 +107,6 @@ end
 
 # ==================== AÇÕES — PREENCHIMENTO DO MODAL ====================
 
-Quando('preencho o campo {string} com {string}') do |campo, valor|
-  fill_in campo, with: valor
-end
-
 Quando('seleciono o tipo {string} na {string}') do |tipo, questao|
   numero = questao.gsub(/\D/, '')
   within(".modal .questao:nth-child(#{numero})") do

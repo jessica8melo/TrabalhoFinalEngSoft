@@ -29,4 +29,6 @@ Rails.application.routes.draw do
   post  "esqueci-senha",          to: "password_resets#create", as: "password_resets"
   get   "redefinir-senha/:token", to: "password_resets#edit",   as: "password_reset"
   patch "redefinir-senha/:token", to: "password_resets#update"
+
+  get "/favicon.ico", to: proc { [204, {}, []] }
 end

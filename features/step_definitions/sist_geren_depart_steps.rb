@@ -99,10 +99,6 @@ Então('vejo informações como {string}, {string}, {string}, {string}, {string}
   expect(page).to have_content(info6)
 end
 
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Dado('que estou visualizando os detalhes da turma {string}') do |codigo_turma|
   @class = Class.find_by(code: codigo_turma)
   visit admin_class_path(@class)
@@ -118,10 +114,6 @@ end
 
 Quando('altero o campo {string} para {string}') do |campo, valor|
   fill_in campo, with: valor
-end
-
-Então('vejo a mensagem de sucesso {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('a turma {string} agora exibe {string}') do |codigo_turma, valor|
@@ -325,10 +317,6 @@ Então('sou redirecionado para o painel do usuário') do
   expect(page).to have_current_path(home_path, wait: 10)
 end
 
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Dado('que sou um Administrador do departamento {string}') do |departamento|
   @department = Department.find_or_create_by!(code: departamento, name: departamento)
   
@@ -356,8 +344,4 @@ Quando('tento acessar a página de edição da turma {string} que pertence ao de
     department: other_department
   )
   visit admin_class_path(@other_class)
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end

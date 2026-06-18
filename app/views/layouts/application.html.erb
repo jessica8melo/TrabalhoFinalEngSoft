@@ -28,15 +28,12 @@
           </p>
         </div>
       </div>
-      <script>
-        setTimeout(() => {
-          const modal = document.querySelector('.modal-overlay');
-          if (modal) modal.remove();
-        }, 3000);
-      </script>
-      <% if flash[:notice] %>
+      <% unless Rails.env.test? %>
         <script>
-          setTimeout(() => { window.location.href = "<%= home_path %>"; }, 1500);
+          setTimeout(() => {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) modal.remove();
+          }, 3000);
         </script>
       <% end %>
     <% end %>

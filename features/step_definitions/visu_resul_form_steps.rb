@@ -385,10 +385,6 @@ Então('não vejo questões nem gráficos') do
   expect(page).not_to have_selector('.questao, canvas, svg')
 end
 
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Dado('que existem múltiplos formulários com quantidades diferentes de respostas') do
   @class = Class.create!(
     code:     'CIC0105',
@@ -464,10 +460,6 @@ end
 
 Então('sou redirecionado para o painel do usuário') do
   expect(page).to have_current_path(home_path, wait: 10)
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Dado('que nenhum formulário foi criado ou enviado') do
@@ -546,10 +538,6 @@ Quando('tento acessar os detalhes deste formulário através de um link antigo')
   visit admin_form_details_path(@form_id)
 end
 
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('sou redirecionado para a página {string}') do |pagina|
   case pagina
   when 'Gerenciamento - Resultados'
@@ -561,10 +549,6 @@ end
 
 Então('a tabela permanece sem aplicar o filtro') do
   expect(page).to have_selector('table')
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Dado('que existe um formulário com mais de 1000 respostas') do
@@ -609,10 +593,6 @@ end
 Quando('clico no botão {string} e a exportação falha') do |botao|
   allow(FormResponse).to receive(:for_export).and_raise(StandardError)
   click_button botao
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('o arquivo não é baixado') do

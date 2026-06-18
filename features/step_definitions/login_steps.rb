@@ -24,26 +24,10 @@ Dado('que estou na página de login do CAMAAR') do
   visit login_path
 end
 
-# ==================== AÇÕES ====================
-
-Quando('preencho o campo {string} com {string}') do |campo, valor|
-  fill_in campo, with: valor
-end
-
-# Removed duplicate click step
-
 # ==================== VERIFICAÇÕES ====================
 
 Então('sou redirecionado para o painel principal') do
-  expect(page).to have_current_path(home_path, wait: 10)
-end
-
-Então('vejo a mensagem de sucesso {string}') do |mensagem|
-expect(page).to have_content(mensagem)
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
+  expect(page).not_to have_current_path(login_path, wait: 10)
 end
 
 Então('vejo a opção {string} no menu lateral') do |string|

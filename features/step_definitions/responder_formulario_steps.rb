@@ -58,10 +58,6 @@ Quando('clico no botão de formulário {string}') do |botao|
   click_button botao
 end
 
-Então('vejo a mensagem de sucesso {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o card do formulário da turma {string} exibe o status {string}') do |turma_code, status|
   formulario = Formulario.joins(:turma).find_by(turmas: { classCode: turma_code })
   within("#formulario_#{formulario.id}") do

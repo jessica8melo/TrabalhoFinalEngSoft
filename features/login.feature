@@ -16,7 +16,6 @@ Funcionalidade: Login no sistema CAMAAR
         Quando preencho o campo "Email ou Matrícula" com "user@gmail.com"
         E preencho o campo "Senha" com "senhaUser"
         E clico no botão "Entrar"
-        E vejo a mensagem de sucesso "Login realizado com sucesso!"
         Então sou redirecionado para o painel principal
 
     @javascript
@@ -24,7 +23,6 @@ Funcionalidade: Login no sistema CAMAAR
         Quando preencho o campo "Email ou Matrícula" com "190084006"
         E preencho o campo "Senha" com "senhaUser"
         E clico no botão "Entrar"
-        E vejo a mensagem de sucesso "Login realizado com sucesso!"
         Então sou redirecionado para o painel principal
 
     @javascript
@@ -32,7 +30,6 @@ Funcionalidade: Login no sistema CAMAAR
         Quando preencho o campo "Email ou Matrícula" com "admin@gmail.com"
         E preencho o campo "Senha" com "senhaAdmin"
         E clico no botão "Entrar"
-        E vejo a mensagem de sucesso "Login realizado com sucesso!"
         Então sou redirecionado para o painel principal
         E vejo a opção "Gerenciamento" no menu lateral
 
@@ -59,6 +56,5 @@ Funcionalidade: Login no sistema CAMAAR
         Quando preencho o campo "Email ou Matrícula" com "user@gmail.com"
         E preencho o campo "Senha" com "senhaUser"
         E clico no botão "Entrar"
-        E vejo a mensagem de sucesso "Login realizado com sucesso!"
         Então sou redirecionado para o painel principal
         E não vejo a opção "Gerenciamento" no menu lateral

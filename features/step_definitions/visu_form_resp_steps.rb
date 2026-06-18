@@ -313,10 +313,6 @@ Então('vejo todas as questões do template') do
   expect(page).to have_selector('.questao')
 end
 
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Dado('que estou preenchendo um formulário') do
   @class = Class.create!(
     code:     'CIC0105',
@@ -461,10 +457,6 @@ Então('a lista está vazia') do
   expect(page).not_to have_selector('.form-card')
 end
 
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Dado('que tentei acessar um formulário através de um link antigo') do
   # Simula tentativa de acesso
   true
@@ -487,10 +479,6 @@ Quando('abro o link de um formulário da turma {string} em que não estou matric
   @other_form.classes << @other_class
   
   visit responder_form_path(@other_form)
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('sou redirecionado para a página {string}') do |pagina|
@@ -558,10 +546,6 @@ Quando('acesso a página {string} e o servidor retorna erro') do |pagina|
   # Simula erro no servidor
   allow(Form).to receive(:for_user).and_raise(StandardError)
   visit avaliacoes_path
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('vejo um botão {string}') do |botao|

@@ -64,10 +64,6 @@ Então('o modal é fechado') do
   expect(page).not_to have_selector('.modal')
 end
 
-Então('vejo a mensagem de sucesso {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o formulário fica disponível para os dicentes da turma {string}') do |turma|
   # Verifica se o formulário foi criado e associado à turma
   expect(Form.last.destiny_type).to eq('discente')
@@ -195,10 +191,6 @@ end
 
 Então('o modal permanece aberto') do
   expect(page).to have_selector('.modal')
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('a data de término anterior à data de início') do
