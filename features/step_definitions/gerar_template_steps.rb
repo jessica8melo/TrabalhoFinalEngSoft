@@ -146,7 +146,7 @@ Quando('deixo o campo {string} da {string} em branco') do |campo, questao|
   end
 end
 
-Quando('deixo o campo {string} em branco') do |campo|
+Quando('deixo o campo de opções {string} em branco') do |campo|
   if campo == 'Opções'
     # Campo de opções fica vazio — não preenche nada
     within('.modal .questao', match: :first) do

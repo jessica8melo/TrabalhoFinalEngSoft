@@ -23,12 +23,6 @@ Dado('que o link de definição de senha foi enviado há mais de 24 horas') do
   @user.update_columns(invitation_sent_at: 25.hours.ago)
 end
 
-# ==================== AÇÕES ====================
-
-Quando('deixo o campo {string} em branco') do |campo|
-  fill_in campo, with: ''
-end
-
 # ==================== VERIFICAÇÕES ====================
 
 Então('sou redirecionado para a página de login') do

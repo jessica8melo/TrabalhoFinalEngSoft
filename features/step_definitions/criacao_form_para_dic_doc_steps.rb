@@ -44,10 +44,6 @@ Quando('preencho as datas de vigência') do
   fill_in 'data_termino', with: '01/06/2026'
 end
 
-Quando('deixo o campo {string} em branco') do |campo|
-  fill_in campo, with: ''
-end
-
 Quando('não seleciono nenhum template no dropdown {string}') do |campo|
   # Campo já começa sem seleção
   expect(find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").value).to be_nil

@@ -69,7 +69,7 @@ Funcionalidade: Criar formulário para Docentes e Dicentes
   # ==================== CENÁRIOS TRISTES ====================
 
     Cenário: Tentativa de criar formulário sem selecionar tipo de destinatário
-        Quando deixo o campo "Tipo de Destinatário" em branco
+        Quando deixo o campo de opções "Tipo de Destinatário" em branco
         E seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
         E seleciono a turma "CIC0105" no campo "Turma(s)"
         E preencho as datas de vigência

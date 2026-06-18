@@ -97,7 +97,7 @@ Funcionalidade: Gerar template de formulário
         E preencho o campo "Nome do template" com "Template Inválido"
         E seleciono o tipo "Radio" na "Questão 1"
         E preencho o campo "Texto" da "Questão 1" com "Avalie o professor"
-        E deixo o campo "Opções" em branco
+        E deixo o campo de opções "Opções" em branco
         E clico no botão "Criar"
         Então o modal permanece aberto
         E vejo a mensagem de erro "Questões do tipo Radio devem ter ao menos uma opção"
