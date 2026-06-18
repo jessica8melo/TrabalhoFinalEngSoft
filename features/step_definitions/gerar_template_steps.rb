@@ -107,10 +107,6 @@ end
 
 # ==================== AÇÕES — PREENCHIMENTO DO MODAL ====================
 
-Quando('preencho o campo {string} com {string}') do |campo, valor|
-  fill_in campo, with: valor
-end
-
 Quando('seleciono o tipo {string} na {string}') do |tipo, questao|
   numero = questao.gsub(/\D/, '')
   within(".modal .questao:nth-child(#{numero})") do
@@ -150,7 +146,7 @@ Quando('deixo o campo {string} da {string} em branco') do |campo, questao|
   end
 end
 
-Quando('deixo o campo {string} em branco') do |campo|
+Quando('deixo o campo de opções {string} em branco') do |campo|
   if campo == 'Opções'
     # Campo de opções fica vazio — não preenche nada
     within('.modal .questao', match: :first) do

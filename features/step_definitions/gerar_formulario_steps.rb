@@ -228,10 +228,6 @@ Então('a tabela de turmas está vazia') do
   end
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o botão {string} está desabilitado') do |botao|
   expect(page).to have_button(botao, disabled: true)
 end

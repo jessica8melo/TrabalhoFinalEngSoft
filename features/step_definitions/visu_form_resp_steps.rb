@@ -246,10 +246,6 @@ Quando('visualizo o card do formulário') do
   visit avaliacoes_path
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('o card exibe uma barra de progresso de tempo em cor verde') do
   expect(page).to have_selector('.progress-bar.verde')
 end
@@ -313,10 +309,6 @@ Então('vejo todas as questões do template') do
   expect(page).to have_selector('.questao')
 end
 
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Dado('que estou preenchendo um formulário') do
   @class = Class.create!(
     code:     'CIC0105',
@@ -340,10 +332,6 @@ end
 
 Quando('preencho algumas questões') do
   fill_in 'Questão 1', with: 'Resposta 1'
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('sou redirecionado para a lista de formulários') do
@@ -453,16 +441,8 @@ Dado('que respondeu todos os formulários das suas turmas') do
   )
 end
 
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('a lista está vazia') do
   expect(page).not_to have_selector('.form-card')
-end
-
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
 end
 
 Dado('que tentei acessar um formulário através de um link antigo') do
@@ -487,10 +467,6 @@ Quando('abro o link de um formulário da turma {string} em que não estou matric
   @other_form.classes << @other_class
   
   visit responder_form_path(@other_form)
-end
-
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('sou redirecionado para a página {string}') do |pagina|
@@ -521,10 +497,6 @@ end
 
 Então('o formulário expirado não aparece na lista') do
   expect(page).not_to have_content('Avaliação Expirada')
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('vejo um botão {string}') do |botao|
@@ -560,10 +532,6 @@ Quando('acesso a página {string} e o servidor retorna erro') do |pagina|
   visit avaliacoes_path
 end
 
-Então('vejo a mensagem de erro {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
-end
-
 Então('vejo um botão {string}') do |botao|
   expect(page).to have_button(botao)
 end
@@ -594,10 +562,6 @@ end
 Quando('a conexão com o servidor é perdida') do
   # Simula perda de conexão
   allow(page).to receive(:current_path).and_raise(Capybara::CapybaraError)
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('o botão {string} é exibido') do |botao|
@@ -661,10 +625,6 @@ end
 
 Quando('abro novamente o formulário') do
   visit responder_form_path(@form)
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('o formulário começa vazio novamente') do
@@ -742,10 +702,6 @@ Quando('tento salvar outro formulário como rascunho') do
   
   visit responder_form_path(@new_form)
   click_button 'Salvar como Rascunho'
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('preciso deletar um rascunho anterior') do

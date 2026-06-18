@@ -23,20 +23,10 @@ Dado('que o link de definição de senha foi enviado há mais de 24 horas') do
   @user.update_columns(invitation_sent_at: 25.hours.ago)
 end
 
-# ==================== AÇÕES ====================
-
-Quando('deixo o campo {string} em branco') do |campo|
-  fill_in campo, with: ''
-end
-
 # ==================== VERIFICAÇÕES ====================
 
 Então('sou redirecionado para a página de login') do
   expect(page).to have_current_path(login_path, wait: 5)
-end
-
-Então('vejo a mensagem {string}') do |mensagem|
-  expect(page).to have_content(mensagem)
 end
 
 Então('permaneço na página de definição de senha') do

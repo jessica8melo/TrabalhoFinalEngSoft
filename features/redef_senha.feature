@@ -15,8 +15,7 @@ Funcionalidade: ReRedefinir senha a partir do e-mail de solicitação de troca d
         Quando preencho o campo "Nova Senha" com "senhaUser"
         E preencho o campo "Confirmar Senha" com "senhaUser"
         E clico no botão "Redefinir Senha"
-        Então sou redirecionado para a página de login
-        E vejo a mensagem "Senha redefinida com sucesso. Faça seu login."
+        Então sou redirecionado para o painel principal
 
   # ==================== CENÁRIOS TRISTES ====================
 

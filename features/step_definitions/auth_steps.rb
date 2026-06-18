@@ -5,14 +5,12 @@ Dado('que estou logado como administrador') do
     u.password = 'password123'
     u.password_confirmation = 'password123'
   end
-  
+
   visit login_path
   fill_in 'Email ou Matrícula', with: 'admin'
   fill_in 'Senha', with: 'password123'
   click_button 'Entrar'
-  # Jessica's login has a JS redirect, so we wait for the notice or the home path
-  expect(page).to have_content("Login realizado com sucesso!", wait: 5)
-  visit home_path # Force visit because we are in a non-JS test environment usually
+  expect(page).not_to have_current_path(login_path, wait: 5)
 end
 
 Dado('que estou logado como Administrador') do
@@ -26,11 +24,10 @@ Dado('que estou logado como Participante') do
     u.password = 'password123'
     u.password_confirmation = 'password123'
   end
-  
+
   visit login_path
   fill_in 'Email ou Matrícula', with: '190084006'
   fill_in 'Senha', with: 'password123'
   click_button 'Entrar'
-  expect(page).to have_content("Login realizado com sucesso!", wait: 5)
-  visit home_path
+  expect(page).not_to have_current_path(login_path, wait: 5)
 end

@@ -7,11 +7,10 @@ class SessionsController < ApplicationController
 
   def create
     user = User.find_by_login(params[:login])
-
+    
     if user&.authenticate(params[:password])
       session[:user_id] = user.id
-      flash[:notice] = "Login realizado com sucesso!"
-      redirect_to home_path
+      redirect_to home_path  # tirar o flash[:notice]
     elsif user && user.password_digest.nil? && user.invitation_token.present?
       redirect_to password_set_path(user.invitation_token), notice: "Este é seu primeiro acesso. Por favor, defina uma senha."
     else
