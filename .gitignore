@@ -30,6 +30,8 @@
 
 /public/assets
 
+# Ignore vendor/bundle
+/vendor/bundle
+
 # Ignore key files for decrypting credentials and more.
 /config/*.key
-

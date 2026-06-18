@@ -11,19 +11,36 @@
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
+    <% if flash[:notice] || flash[:alert] || flash[:logout] || flash[:success] %>
+      <div class="modal-overlay">
+        <div class="modal">
+          <p class="<%= flash[:notice] || flash[:success] ? 'notice' : 'flash-alert' %>">
+            <%= flash[:notice] || flash[:alert] || flash[:logout] || flash[:success] %>
+          </p>
+        </div>
+      </div>
+      <script>
+        setTimeout(() => {
+          const modal = document.querySelector('.modal-overlay');
+          if (modal) modal.remove();
+        }, 3000);
+      </script>
+      <% if flash[:notice] %>
+        <script>
+          setTimeout(() => { window.location.href = "<%= home_path %>"; }, 1500);
+        </script>
+      <% end %>
+    <% end %>
+
     <%= yield %>
   </body>
 </html>
