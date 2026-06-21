@@ -16,7 +16,7 @@ class Admin::ImportsController < ApplicationController
   # Retorno: Nenhum
   # Efeitos Colaterais: Cria usuários/turmas no banco de dados e redireciona a página.
   def create
-    return se_arquivo_invalido se arquivo_invalido?
+    return se_arquivo_invalido if arquivo_invalido?
     
     result = processar_importacao(params[:file].read, params[:import_type])
     
