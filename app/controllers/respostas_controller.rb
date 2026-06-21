@@ -1,3 +1,4 @@
+# Controller responsável por receber e processar as respostas dos discentes às avaliações.
 class RespostasController < ApplicationController
   layout "dashboard"
 

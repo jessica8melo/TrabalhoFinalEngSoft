@@ -1,3 +1,4 @@
+# Controller responsável por gerenciar a importação de turmas e discentes do SIGAA.
 class Admin::ImportsController < ApplicationController
   layout 'dashboard'
   before_action :require_admin

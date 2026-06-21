@@ -1,3 +1,4 @@
+# Controller responsável pelo primeiro cadastro de senha via convite.
 class PasswordSetsController < ApplicationController
   skip_before_action :require_login 
 

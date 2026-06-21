@@ -1,3 +1,4 @@
+# Controller responsável por gerenciar a redefinição de senhas esquecidas.
 class PasswordResetsController < ApplicationController
   skip_before_action :require_login
 
