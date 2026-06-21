@@ -54,6 +54,12 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Gems para a Entrega 3 (Sprint 3)
+  gem "saikuro"
+  gem "rubycritic", require: false
+  gem "simplecov", require: false
+  gem "rdoc"
 end
 
 group :development do
