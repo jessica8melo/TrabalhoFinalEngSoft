@@ -2,9 +2,6 @@
 
 # ==================== CONTEXTO ====================
 
-# Removed duplicate navigation step
-
-
 Então('um modal é exibido com os campos {string}, {string}, {string} e data de disponibilidade') do |campo1, campo2, campo3|
   expect(page).to have_selector('.modal')
   expect(page).to have_field(campo1)
