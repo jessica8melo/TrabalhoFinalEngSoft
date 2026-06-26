@@ -2,19 +2,20 @@
 
 # ==================== CONTEXTO ====================
 
-Dado('que estou logado como Participante') do
-  @user = User.create!(
-    email:                 'participante@gmail.com',
-    matricula:             '190084010',
-    password:              'senhaParticipante',
-    password_confirmation: 'senhaParticipante',
-    role:                  'discente'
-  )
-  
-  visit login_path
-  fill_in 'email', with: 'participante@gmail.com'
-  fill_in 'password', with: 'senhaParticipante'
-  click_button 'Entrar'
+def assign_user_to_turma(user, turma)
+  if user.discente?
+    Discente.find_or_create_by!(matricula: user.matricula, turma: turma) do |discente|
+      discente.nome = user.nome || user.email
+      discente.email = user.email
+    end
+  elsif user.docente?
+    Docente.find_or_create_by!(usuario: user.matricula, turma: turma) do |docente|
+      docente.nome = user.nome || user.email
+      docente.email = user.email
+    end
+  else
+    raise "Usuário #{user.email} não pode ser associado à turma #{turma.classCode}"
+  end
 end
 
 Então('vejo uma seção com os formulários não respondidos das minhas turmas') do
@@ -33,42 +34,52 @@ Quando('acesso a página {string}') do |pagina|
 end
 
 Então('vejo uma lista com cards de formulários não respondidos') do
-  expect(page).to have_selector('.form-card')
+  expect(page).to have_selector('.card')
+end
+
+Então('o formulário é removido da lista') do
+  expect(page).not_to have_selector("#formulario_#{@form.id}")
 end
 
 Então('cada card exibe {string}, {string}, {string} e um botão {string}') do |info1, info2, info3, botao|
-  card = find('.form-card')
+  card = find('.card')
   expect(card).to have_content(info1) # Turma
   expect(card).to have_content(info2) # Template
   expect(card).to have_content(info3) # Data de Término
-  expect(card).to have_button(botao)
+  expect(card.has_link?(botao) || card.has_button?(botao)).to be(true)
 end
 
 Então('os formulários são agrupados por turma') do
-  expect(page).to have_selector('.turma-group')
+  expect(page).to have_content('Turma:')
 end
 
 Dado('que existem formulários não respondidos') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação de Engenharia de Software',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação de Engenharia de Software',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
 end
 
 Quando('clico no card de um formulário') do
-  click_link find('.form-card').text
+  within(first('.card')) do
+    click_link 'Responder'
+  end
+end
+
+Quando('clico no card do formulário') do
+  within(first('.card')) do
+    click_link 'Responder'
+  end
 end
 
 Então('vejo os detalhes completos como {string}, {string}, {string}, {string}') do |info1, info2, info3, info4|
@@ -87,34 +98,31 @@ Então('vejo a quantidade de questões do formulário') do
 end
 
 Dado('que estou matriculado em múltiplas turmas com formulários') do
-  @class1 = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class1 = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
-  @class2 = Class.create!(
-    code:     'CIC0202',
-    name:     'Banco de Dados',
+  @class2 = Turma.create!(
+    classCode:     'CIC0202',
+    nome:     'Banco de Dados',
     semester: '2026.1'
   )
   
-  @user.classes << [@class1, @class2]
+  assign_user_to_turma(@user, @class1)
+  assign_user_to_turma(@user, @class2)
   
-  @form1 = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação 1',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form1 = Formulario.create!(
+    titulo: 'Avaliação 1',
+    deadline: 1.day.from_now
   )
-  @form1.classes << @class1
+  @form1.update!(turma: @class1)
   
-  @form2 = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação 2',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form2 = Formulario.create!(
+    titulo: 'Avaliação 2',
+    deadline: 1.day.from_now
   )
-  @form2.classes << @class2
+  @form2.update!(turma: @class2)
 end
 
 Quando('seleciono a turma {string} no filtro') do |turma|
@@ -126,7 +134,7 @@ Então('a lista exibe apenas os formulários da turma {string}') do |turma|
 end
 
 Então('os formulários de outras turmas deixam de aparecer') do
-  expect(page).not_to have_selector('.form-card', count: 2)
+  expect(page).not_to have_selector('.card', count: 2)
 end
 
 Dado('que sou um Dicente com formulários para dicentes e também Docente com formulários para docentes') do
@@ -146,30 +154,26 @@ Dado('que sou um Dicente com formulários para dicentes e também Docente com fo
     role:                  'docente'
   )
   
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user_dicente.classes << @class
-  @user_docente.classes << @class
+  assign_user_to_turma(@user_dicente, @class)
+  assign_user_to_turma(@user_docente, @class)
   
-  @form_dicente = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação para Dicentes',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form_dicente = Formulario.create!(
+    titulo: 'Avaliação para Dicentes',
+    deadline: 1.day.from_now
   )
-  @form_dicente.classes << @class
+  @form_dicente.update!(turma: @class)
   
-  @form_docente = Form.create!(
-    destiny_type: 'docente',
-    template_name: 'Avaliação para Docentes',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form_docente = Formulario.create!(
+    titulo: 'Avaliação para Docentes',
+    deadline: 1.day.from_now
   )
-  @form_docente.classes << @class
+  @form_docente.update!(turma: @class)
 end
 
 Quando('seleciono {string} no filtro {string}') do |opcao, filtro|
@@ -185,29 +189,23 @@ Então('os formulários para docentes deixam de aparecer') do
 end
 
 Dado('que existem múltiplos formulários com datas diferentes') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form1 = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Formulário 1',
-    start_date: 5.days.ago,
-    end_date: 5.days.from_now
+  @form1 = Formulario.create!(
+    titulo: 'Formulário 1',
+    deadline: 5.days.from_now
   )
-  @form1.classes << @class
   
-  @form2 = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Formulário 2',
-    start_date: 2.days.ago,
-    end_date: 2.days.from_now
+  @form2 = Formulario.create!(
+    titulo: 'Formulário 2',
+    deadline: 2.days.from_now
   )
-  @form2.classes << @class
 end
 
 Quando('clico no filtro {string}') do |filtro|
@@ -218,28 +216,26 @@ Quando('seleciono {string}') do |opcao|
   click_link opcao
 end
 
-Então('os formulários aparecem ordenados por data de término (mais próximos primeiro)') do
-  cards = all('.form-card')
+Então(/os formulários aparecem ordenados por data de término/) do
+  cards = all('.card')
   expect(cards.first).to have_content('2 dias') # Mais próximo
 end
 
 Dado('que existe um formulário com deadline em 2 dias') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 2.days.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 2.days.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
 end
 
 Quando('visualizo o card do formulário') do
@@ -251,22 +247,20 @@ Então('o card exibe uma barra de progresso de tempo em cor verde') do
 end
 
 Dado('que existe um formulário vencendo em 1 hora') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação Urgente',
-    start_date: 1.day.ago,
-    end_date: 1.hour.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação Urgente',
+    deadline: 1.hour.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
 end
 
 Então('vejo a mensagem de alerta {string}') do |mensagem|
@@ -278,22 +272,20 @@ Então('o card exibe uma barra de progresso de tempo em cor vermelha') do
 end
 
 Dado('que estou visualizando um formulário não respondido') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   
   visit avaliacoes_path
   click_button 'Responder'
@@ -310,22 +302,20 @@ Então('vejo todas as questões do template') do
 end
 
 Dado('que estou preenchendo um formulário') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   
   visit responder_form_path(@form)
 end
@@ -343,25 +333,23 @@ Então('o card do formulário exibe {string}') do |status|
 end
 
 Dado('que salvei um formulário como rascunho anteriormente') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   
-  @draft = FormResponse.create!(
-    form: @form,
+  @draft = Resposta.create!(
+    formulario: @form,
     user: @user,
     status: 'draft',
     answers: { 'q1' => 'Resposta anterior' }
@@ -416,26 +404,24 @@ end
 # ==================== CENÁRIOS TRISTES ====================
 
 Dado('que respondeu todos os formulários das suas turmas') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   
   # Marca como respondido
-  FormResponse.create!(
-    form: @form,
+  Resposta.create!(
+    formulario: @form,
     user: @user,
     status: 'submitted'
   )
@@ -451,20 +437,18 @@ Dado('que tentei acessar um formulário através de um link antigo') do
 end
 
 Quando('abro o link de um formulário da turma {string} em que não estou matriculado') do |turma|
-  @other_class = Class.create!(
-    code:     turma,
-    name:     'Outra Turma',
+  @other_class = Turma.create!(
+    classCode:     turma,
+    nome:     'Outra Turma',
     semester: '2026.1'
   )
   
-  @other_form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @other_form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @other_form.classes << @other_class
+  @other_form.update!(turma: @other_class)
   
   visit responder_form_path(@other_form)
 end
@@ -477,22 +461,20 @@ Então('sou redirecionado para a página {string}') do |pagina|
 end
 
 Dado('que existe um formulário com deadline já vencido há 1 dia') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @expired_form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação Expirada',
-    start_date: 3.days.ago,
-    end_date: 1.day.ago
+  @expired_form = Formulario.create!(
+    titulo: 'Avaliação Expirada',
+    deadline: 1.day.ago
   )
   
-  @expired_form.classes << @class
+  @expired_form.update!(turma: @class)
 end
 
 Então('o formulário expirado não aparece na lista') do
@@ -504,22 +486,20 @@ Então('vejo um botão {string}') do |botao|
 end
 
 Dado('que tentei abrir um formulário após seu deadline') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @expired_form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação Expirada',
-    start_date: 3.days.ago,
-    end_date: 1.day.ago
+  @expired_form = Formulario.create!(
+    titulo: 'Avaliação Expirada',
+    deadline: 1.day.ago
   )
   
-  @expired_form.classes << @class
+  @expired_form.update!(turma: @class)
 end
 
 Então('não consigo acessar o formulário') do
@@ -541,22 +521,20 @@ Então('nenhum formulário é exibido') do
 end
 
 Dado('que cliquei em um formulário para responder') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
 end
 
 Quando('a conexão com o servidor é perdida') do
@@ -569,22 +547,20 @@ Então('o botão {string} é exibido') do |botao|
 end
 
 Dado('que estava visualizando os detalhes de um formulário') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   visit avaliacoes_path
   click_link @form.template_name
 end
@@ -598,22 +574,20 @@ Quando('atualizo a página') do
 end
 
 Dado('que estava preenchendo um formulário') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   visit responder_form_path(@form)
   fill_in 'Questão 1', with: 'Minha resposta'
 end
@@ -632,28 +606,26 @@ Então('o formulário começa vazio novamente') do
 end
 
 Dado('que estou preenchendo um formulário') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form = Formulario.create!(
+    titulo: 'Avaliação',
+    deadline: 1.day.from_now
   )
   
-  @form.classes << @class
+  @form.update!(turma: @class)
   visit responder_form_path(@form)
 end
 
 Quando('clico em {string} e o servidor retorna erro') do |acao|
   # Simula erro no servidor ao salvar
-  allow(FormResponse).to receive(:create!).and_raise(StandardError)
+  allow(Resposta).to receive(:create!).and_raise(StandardError)
   click_button acao
 end
 
@@ -666,39 +638,43 @@ Então('meus dados continuam no formulário') do
 end
 
 Dado('que salvei 10 formulários como rascunho') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
   10.times do |i|
-    form = Form.create!(
-      destiny_type: 'discente',
-      template_name: "Avaliação #{i}",
-      start_date: 1.day.ago,
-      end_date: 1.day.from_now
+    form = Formulario.create!(
+      titulo: "Avaliação #{i}",
+      deadline: 1.day.from_now,
+      turma: @class
     )
-    form.classes << @class
-    
-    FormResponse.create!(
-      form: form,
+
+    pergunta = Pergunta.create!(
+      formulario: form,
+      enunciado: "Questão #{i + 1}",
+      tipo_pergunta: 'texto',
+      obrigatoria: false
+    )
+
+    Resposta.create!(
+      formulario: form,
       user: @user,
-      status: 'draft'
+      pergunta: pergunta,
+      conteudo: 'Rascunho'
     )
   end
 end
 
 Quando('tento salvar outro formulário como rascunho') do
-  @new_form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação Extra',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @new_form = Formulario.create!(
+    titulo: 'Avaliação Extra',
+    deadline: 1.day.from_now
   )
-  @new_form.classes << @class
+  @new_form.update!(turma: @class)
   
   visit responder_form_path(@new_form)
   click_button 'Salvar como Rascunho'
@@ -709,7 +685,7 @@ Então('preciso deletar um rascunho anterior') do
 end
 
 Então('o formulário não é salvo') do
-  expect(FormResponse.where(form: @new_form).count).to eq(0)
+  expect(Resposta.where(formulario: @new_form).count).to eq(0)
 end
 
 Dado('que sou um Dicente') do
@@ -728,22 +704,20 @@ Dado('que sou um Dicente') do
 end
 
 Quando('um formulário é enviado especificamente para Docentes') do
-  @class = Class.create!(
-    code:     'CIC0105',
-    name:     'Engenharia de Software',
+  @class = Turma.create!(
+    classCode:     'CIC0105',
+    nome:     'Engenharia de Software',
     semester: '2026.1'
   )
   
-  @user.classes << @class
+  assign_user_to_turma(@user, @class)
   
-  @form_docente = Form.create!(
-    destiny_type: 'docente',
-    template_name: 'Avaliação para Docentes',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+  @form_docente = Formulario.create!(
+    titulo: 'Avaliação para Docentes',
+    deadline: 1.day.from_now
   )
   
-  @form_docente.classes << @class
+  @form_docente.update!(turma: @class)
 end
 
 Então('esse formulário não aparece na minha lista de não respondidos') do

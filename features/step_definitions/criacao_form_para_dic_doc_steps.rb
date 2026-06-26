@@ -2,9 +2,6 @@
 
 # ==================== CONTEXTO ====================
 
-# Removed duplicate navigation step
-
-
 Então('um modal é exibido com os campos {string}, {string}, {string} e data de disponibilidade') do |campo1, campo2, campo3|
   expect(page).to have_selector('.modal')
   expect(page).to have_field(campo1)
@@ -44,6 +41,10 @@ Quando('preencho as datas de vigência') do
   fill_in 'data_termino', with: '01/06/2026'
 end
 
+Quando('deixo o campo {string} em branco') do |campo|
+  fill_in campo, with: ''
+end
+
 Quando('não seleciono nenhum template no dropdown {string}') do |campo|
   # Campo já começa sem seleção
   expect(find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").value).to be_nil
@@ -58,6 +59,10 @@ end
 
 Então('o modal é fechado') do
   expect(page).not_to have_selector('.modal')
+end
+
+Então('vejo a mensagem de sucesso {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
 end
 
 Então('o formulário fica disponível para os dicentes da turma {string}') do |turma|
@@ -187,6 +192,10 @@ end
 
 Então('o modal permanece aberto') do
   expect(page).to have_selector('.modal')
+end
+
+Então('vejo a mensagem de erro {string}') do |mensagem|
+  expect(page).to have_content(mensagem)
 end
 
 Então('a data de término anterior à data de início') do
