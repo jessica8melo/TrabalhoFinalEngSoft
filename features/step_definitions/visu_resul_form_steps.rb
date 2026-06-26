@@ -2,13 +2,6 @@
 
 # ==================== CONTEXTO ====================
 
-# Removed duplicate auth step
-
-# Removed duplicate navigation step
-
-# Removed duplicate click step
-
-
 Então('sou redirecionado para a página {string}') do |pagina|
   case pagina
   when 'Gerenciamento - Resultados'
