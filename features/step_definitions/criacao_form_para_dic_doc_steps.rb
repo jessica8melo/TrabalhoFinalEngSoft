@@ -15,10 +15,6 @@ Quando('seleciono {string} no campo {string}') do |opcao, campo|
   select opcao, from: campo
 end
 
-Quando('seleciono o template {string} no dropdown {string}') do |template, campo|
-  select template, from: campo
-end
-
 Quando('seleciono a turma {string} no campo {string}') do |turma, campo|
   select turma, from: campo
 end
@@ -41,21 +37,12 @@ Quando('preencho as datas de vigência') do
   fill_in 'data_termino', with: '01/06/2026'
 end
 
-Quando('não seleciono nenhum template no dropdown {string}') do |campo|
-  # Campo já começa sem seleção
-  expect(find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").value).to be_nil
-end
-
 Quando('não seleciono nenhuma turma no campo {string}') do |campo|
   # Campo já começa sem seleção
   expect(find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").value).to be_nil
 end
 
 # ==================== CENÁRIOS FELIZES - VERIFICAÇÕES ====================
-
-Então('o modal é fechado') do
-  expect(page).not_to have_selector('.modal')
-end
 
 Então('o formulário fica disponível para os dicentes da turma {string}') do |turma|
   # Verifica se o formulário foi criado e associado à turma
@@ -136,8 +123,8 @@ Então('um Dicente matriculado na turma {string} acessa o painel de Avaliações
   
   # Login como dicente
   visit login_path
-  fill_in 'email', with: 'dicente@gmail.com'
-  fill_in 'password', with: 'senhaDicente'
+  fill_in 'Email ou Matrícula', with: 'dicente@gmail.com'
+  fill_in 'Senha', with: 'senhaDicente'
   click_button 'Entrar'
   
   # Acessa painel de Avaliações
@@ -167,8 +154,8 @@ Então('um Docente vinculado à turma {string} acessa o painel de Avaliações')
   
   # Login como docente
   visit login_path
-  fill_in 'email', with: 'docente@gmail.com'
-  fill_in 'password', with: 'senhaDocente'
+  fill_in 'Email ou Matrícula', with: 'docente@gmail.com'
+  fill_in 'Senha', with: 'senhaDocente'
   click_button 'Entrar'
   
   # Acessa painel de Avaliações
@@ -181,10 +168,6 @@ Então('o docente visualiza o card do formulário dentro do período de vigênci
 end
 
 # ==================== CENÁRIOS TRISTES - VERIFICAÇÕES ====================
-
-Então('o modal permanece aberto') do
-  expect(page).to have_selector('.modal')
-end
 
 Então('a data de término anterior à data de início') do
   fill_in 'data_termino', with: '20/05/2026'

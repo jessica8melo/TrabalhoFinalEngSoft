@@ -24,15 +24,6 @@ end
 
 # ==================== CENÁRIOS FELIZES - AÇÕES ====================
 
-Quando('acesso a página {string}') do |pagina|
-  case pagina
-  when 'Avaliações'
-    visit avaliacoes_path
-  else
-    visit '/'
-  end
-end
-
 Então('vejo uma lista com cards de formulários não respondidos') do
   expect(page).to have_selector('.card')
 end
@@ -121,10 +112,6 @@ Dado('que estou matriculado em múltiplas turmas com formulários') do
   @form2.update!(turma: @class2)
 end
 
-Quando('seleciono a turma {string} no filtro') do |turma|
-  select turma, from: 'filtro_turma'
-end
-
 Então('a lista exibe apenas os formulários da turma {string}') do |turma|
   expect(page).to have_content(turma)
 end
@@ -172,16 +159,8 @@ Dado('que sou um Dicente com formulários para dicentes e também Docente com fo
   @form_docente.update!(turma: @class)
 end
 
-Quando('seleciono {string} no filtro {string}') do |opcao, filtro|
-  select opcao, from: filtro
-end
-
 Então('a lista exibe apenas os formulários destinados a dicentes') do
   expect(page).to have_content('Avaliação para Dicentes')
-end
-
-Então('os formulários para docentes deixam de aparecer') do
-  expect(page).not_to have_content('Avaliação para Docentes')
 end
 
 Dado('que existem múltiplos formulários com datas diferentes') do
@@ -445,13 +424,6 @@ Quando('abro o link de um formulário da turma {string} em que não estou matric
   visit responder_form_path(@other_form)
 end
 
-Então('sou redirecionado para a página {string}') do |pagina|
-  case pagina
-  when 'Avaliações'
-    expect(page).to have_current_path(avaliacoes_path, wait: 10)
-  end
-end
-
 Dado('que existe um formulário com deadline já vencido há 1 dia') do
   @class = Turma.create!(
     classCode:     'CIC0105',
@@ -589,24 +561,6 @@ Então('o formulário começa vazio novamente') do
   expect(page).to have_field('Questão 1', with: '')
 end
 
-Dado('que estou preenchendo um formulário') do
-  @class = Turma.create!(
-    classCode:     'CIC0105',
-    nome:     'Engenharia de Software',
-    semester: '2026.1'
-  )
-  
-  assign_user_to_turma(@user, @class)
-  
-  @form = Formulario.create!(
-    titulo: 'Avaliação',
-    deadline: 1.day.from_now
-  )
-  
-  @form.update!(turma: @class)
-  visit responder_form_path(@form)
-end
-
 Quando('clico em {string} e o servidor retorna erro') do |acao|
   # Simula erro no servidor ao salvar
   allow(Resposta).to receive(:create!).and_raise(StandardError)
@@ -682,8 +636,8 @@ Dado('que sou um Dicente') do
   )
   
   visit login_path
-  fill_in 'email', with: 'dicente@gmail.com'
-  fill_in 'password', with: 'senha'
+  fill_in 'Email ou Matrícula', with: 'dicente@gmail.com'
+  fill_in 'Senha', with: 'senha'
   click_button 'Entrar'
 end
 

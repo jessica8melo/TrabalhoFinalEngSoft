@@ -104,23 +104,7 @@ Então('cada linha da tabela possui um checkbox para seleção') do
   end
 end
 
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 # ==================== AÇÕES — PREENCHIMENTO DO MODAL ====================
-
-Quando('seleciono o template {string} no dropdown {string}') do |template, campo|
-  within('.modal') do
-    select template, from: campo
-  end
-end
-
-Quando('não seleciono nenhum template no dropdown {string}') do |campo|
-  within('.modal') do
-    expect(find("select[name='template']").value).to be_blank
-  end
-end
 
 Quando('marco o checkbox da turma {string} com semestre {string} e código {string}') do |nome, semestre, codigo|
   within('.modal table tbody') do
@@ -187,8 +171,8 @@ Então('um Discente matriculado na turma {string} acessa o painel de Avaliaçõe
   @discente.turmas << turma
 
   visit login_path
-  fill_in 'email',    with: 'discente.form@gmail.com'
-  fill_in 'password', with: 'senhaDicente'
+  fill_in 'Email ou Matrícula', with: 'discente.form@gmail.com'
+  fill_in 'Senha', with: 'senhaDicente'
   click_button 'Entrar'
 
   visit avaliacoes_path
@@ -224,8 +208,8 @@ Então('o resultado fica disponível na tela {string} do Administrador') do |pag
   # Faz logout do discente e login como admin para verificar
   click_on 'Logout' if page.has_link?('Logout')
   visit login_path
-  fill_in 'email',    with: 'admin@gmail.com'
-  fill_in 'password', with: 'senhaAdmin'
+  fill_in 'Email ou Matrícula', with: 'admin@gmail.com'
+  fill_in 'Senha', with: 'senhaAdmin'
   click_button 'Entrar'
 
   visit admin_results_path
@@ -242,15 +226,4 @@ end
 
 Então('o botão {string} está desabilitado') do |botao|
   expect(page).to have_button(botao, disabled: true)
-end
-
-Quando('tento acessar a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento'
-    visit admin_management_path
-  when 'Gerenciamento - Templates'
-    visit admin_templates_path
-  when 'Gerenciamento - Resultados'
-    visit admin_results_path
-  end
 end

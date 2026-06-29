@@ -1,31 +1,11 @@
 # encoding: utf-8
 
 # ==================== CONTEXTO ====================
-
-Então('sou redirecionado para a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Resultados'
-    expect(page).to have_current_path(admin_results_path, wait: 10)
-  else
-    expect(page).to have_current_path('/')
-  end
-end
-
 Então('vejo uma tabela com os formulários enviados') do
   expect(page).to have_selector('table')
 end
 
 # ==================== CENÁRIOS FELIZES - AÇÕES ====================
-
-Quando('acesso a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Resultados'
-    visit admin_results_path
-  else
-    visit '/'
-  end
-end
-
 Então('vejo uma tabela com as colunas {string}, {string}, {string}, {string} e {string}') do |col1, col2, col3, col4, col5|
   expect(page).to have_selector('table th', text: col1)
   expect(page).to have_selector('table th', text: col2)
@@ -237,10 +217,6 @@ Dado('que existem formulários de múltiplas turmas') do
   @form2.classes << @class2
 end
 
-Quando('seleciono a turma {string} no filtro') do |turma|
-  select turma, from: 'filtro_turma'
-end
-
 Então('a tabela exibe apenas os formulários da turma {string}') do |turma|
   expect(page).to have_content(turma)
 end
@@ -273,16 +249,8 @@ Dado('que existem formulários para dicentes e docentes') do
   @form_docente.classes << @class
 end
 
-Quando('seleciono {string} no filtro {string}') do |opcao, filtro|
-  select opcao, from: filtro
-end
-
 Então('a tabela exibe apenas os formulários destinados a dicentes') do
   expect(page).to have_content('Dicentes')
-end
-
-Então('os formulários para docentes deixam de aparecer') do
-  expect(page).not_to have_content('Docentes')
 end
 
 Dado('que existem formulários de períodos diferentes') do
@@ -331,8 +299,6 @@ Dado('que abri os detalhes de um formulário') do
   visit admin_results_path
   click_button 'Ver Detalhes'
 end
-
-# Removed duplicate click step
 
 Então('um arquivo com as respostas do formulário é baixado') do
   expect(page.response_headers['Content-Disposition']).to include('attachment')
@@ -412,10 +378,6 @@ Dado('que existem múltiplos formulários com quantidades diferentes de resposta
   FormResponse.create!(form: @form2, user: @dicente1)
 end
 
-Quando('clico no cabeçalho da coluna {string}') do |coluna|
-  find("th", text: coluna).click
-end
-
 Então('a tabela é ordenada em ordem decrescente de respostas') do
   rows = all('table tbody tr')
   expect(rows.first).to have_content('3') # Maior quantidade
@@ -431,29 +393,6 @@ Então('a tabela é ordenada em ordem crescente') do
 end
 
 # ==================== CENÁRIOS TRISTES ====================
-
-Dado('que estou logado como Dicente') do
-  @dicente = User.create!(
-    email:                 'dicente@gmail.com',
-    matricula:             '190084015',
-    password:              'senha',
-    password_confirmation: 'senha',
-    role:                  'discente'
-  )
-  
-  visit login_path
-  fill_in 'email', with: 'dicente@gmail.com'
-  fill_in 'password', with: 'senha'
-  click_button 'Entrar'
-end
-
-Quando('tento acessar a página {string}') do |pagina|
-  visit admin_results_path
-end
-
-Então('sou redirecionado para o painel do usuário') do
-  expect(page).to have_current_path(home_path, wait: 10)
-end
 
 Dado('que nenhum formulário foi criado ou enviado') do
   # Nenhum formulário é criado
@@ -477,8 +416,8 @@ Dado('que sou um Docente') do
   )
   
   visit login_path
-  fill_in 'email', with: 'docente@gmail.com'
-  fill_in 'password', with: 'senha'
+  fill_in 'Email ou Matrícula', with: 'docente@gmail.com'
+  fill_in 'Senha', with: 'senha'
   click_button 'Entrar'
 end
 
@@ -522,15 +461,6 @@ end
 Quando('tento acessar os detalhes deste formulário através de um link antigo') do
   visit admin_form_details_path(@form_id)
 end
-
-Então('sou redirecionado para a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Resultados'
-    expect(page).to have_current_path(admin_results_path, wait: 10)
-  end
-end
-
-# Removed duplicate click step
 
 Então('a tabela permanece sem aplicar o filtro') do
   expect(page).to have_selector('table')

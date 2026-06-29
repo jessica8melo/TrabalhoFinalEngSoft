@@ -15,36 +15,14 @@ Dado('que estou logado como Administrador do departamento {string}') do |departa
   )
   
   visit login_path
-  fill_in 'email', with: @admin_user.email
-  fill_in 'password', with: 'senhaAdmin'
+  fill_in 'Email ou Matrícula', with: @admin_user.email
+  fill_in 'Senha', with: 'senhaAdmin'
   click_button 'Entrar'
-end
-
-# Removed duplicate click step
-
-Então('sou redirecionado para a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Turmas'
-    expect(page).to have_current_path(admin_classes_path, wait: 10)
-  else
-    expect(page).to have_current_path('/')
-  end
 end
 
 Então('vejo uma tabela com as turmas do departamento {string}') do |departamento|
   expect(page).to have_selector('table')
   expect(page).to have_content(departamento)
-end
-
-# ==================== CENÁRIOS FELIZES - AÇÕES E VERIFICAÇÕES ====================
-
-Quando('acesso a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Turmas'
-    visit admin_classes_path
-  else
-    visit '/'
-  end
 end
 
 Então('vejo a tabela com colunas {string}, {string}, {string}, {string} e {string}') do |col1, col2, col3, col4, col5|
@@ -258,20 +236,12 @@ Dado('que existem turmas com status {string} e {string}') do |status1, status2|
   )
 end
 
-Quando('seleciono {string} no filtro {string}') do |opcao, filtro|
-  select opcao, from: filtro
-end
-
 Então('a tabela exibe apenas as turmas ativas') do
   expect(page).to have_content('Ativa')
 end
 
 Então('as turmas encerradas deixam de aparecer') do
   expect(page).not_to have_content('Encerrada')
-end
-
-Quando('clico no cabeçalho da coluna {string}') do |coluna|
-  find("th", text: coluna).click
 end
 
 Então('a tabela é ordenada alfabeticamente por nome') do
@@ -294,29 +264,6 @@ end
 
 # ==================== CENÁRIOS TRISTES ====================
 
-Dado('que estou logado como Dicente') do
-  @dicente = User.create!(
-    email:                 'dicente@gmail.com',
-    matricula:             '190084009',
-    password:              'senhaDicente',
-    password_confirmation: 'senhaDicente',
-    role:                  'discente'
-  )
-  
-  visit login_path
-  fill_in 'email', with: 'dicente@gmail.com'
-  fill_in 'password', with: 'senhaDicente'
-  click_button 'Entrar'
-end
-
-Quando('tento acessar a página {string}') do |pagina|
-  visit admin_classes_path
-end
-
-Então('sou redirecionado para o painel do usuário') do
-  expect(page).to have_current_path(home_path, wait: 10)
-end
-
 Dado('que sou um Administrador do departamento {string}') do |departamento|
   @department = Department.find_or_create_by!(code: departamento, name: departamento)
   
@@ -330,8 +277,8 @@ Dado('que sou um Administrador do departamento {string}') do |departamento|
   )
   
   visit login_path
-  fill_in 'email', with: @admin_user.email
-  fill_in 'password', with: 'senhaAdmin'
+  fill_in 'Email ou Matrícula', with: @admin_user.email
+  fill_in 'Senha', with: 'senhaAdmin'
   click_button 'Entrar'
 end
 

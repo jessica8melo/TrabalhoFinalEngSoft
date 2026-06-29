@@ -42,28 +42,7 @@ Dado('que já existe um template com o nome {string}') do |nome_template|
   visit admin_templates_path
 end
 
-Dado('que estou logado como Discente') do
-  @discente_user = User.create!(
-    email:                 'discente.teste@gmail.com',
-    matricula:             '190099999',
-    password:              'senhaDicente',
-    password_confirmation: 'senhaDicente',
-    role:                  'discente'
-  )
-  visit login_path
-  fill_in 'email',    with: 'discente.teste@gmail.com'
-  fill_in 'password', with: 'senhaDicente'
-  click_button 'Entrar'
-end
-
 # ==================== AÇÕES — NAVEGAÇÃO E MODAL ====================
-
-Então('sou redirecionado para a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Templates'
-    expect(current_path).to eq(admin_templates_path)
-  end
-end
 
 Então('vejo os templates existentes exibidos em cards com nome e semestre') do
   expect(page).to have_selector('.template-card')
@@ -99,10 +78,6 @@ Então('o modal contém ao menos uma questão com os campos {string}, {string} e
     expect(page).to have_field(campo2)
     expect(page).to have_field(campo3)
   end
-end
-
-Então('vejo o botão {string}') do |botao|
-  expect(page).to have_button(botao)
 end
 
 # ==================== AÇÕES — PREENCHIMENTO DO MODAL ====================
@@ -157,10 +132,6 @@ Quando('deixo o campo de opções {string} em branco') do |campo|
   end
 end
 
-Quando('não seleciono nenhum template no dropdown {string}') do |campo|
-  expect(find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").value).to be_nil
-end
-
 # ==================== AÇÕES — EDITAR E EXCLUIR ====================
 
 Quando('clico no ícone de editar do template {string}') do |nome_template|
@@ -196,10 +167,6 @@ end
 
 # ==================== VERIFICAÇÕES — CENÁRIOS FELIZES ====================
 
-Então('o modal é fechado') do
-  expect(page).not_to have_selector('.modal')
-end
-
 Então('o template {string} aparece na listagem de cards') do |nome_template|
   expect(page).to have_selector('.template-card', text: nome_template)
 end
@@ -221,19 +188,4 @@ end
 
 Então('o card {string} é removido da listagem') do |nome_template|
   expect(page).not_to have_selector('.template-card', text: nome_template)
-end
-
-# ==================== VERIFICAÇÕES — CENÁRIOS TRISTES ====================
-
-Então('o modal permanece aberto') do
-  expect(page).to have_selector('.modal')
-end
-
-Quando('tento acessar a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Templates'
-    visit admin_templates_path
-  when 'Gerenciamento'
-    visit admin_management_path
-  end
 end

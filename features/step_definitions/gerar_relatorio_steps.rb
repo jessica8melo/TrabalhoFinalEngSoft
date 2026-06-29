@@ -105,20 +105,6 @@ Dado('que nenhum formulário foi enviado para nenhuma turma') do
   Turma.destroy_all
 end
 
-Dado('que estou logado como Discente') do
-  @discente_user = User.create!(
-    email:                 'discente.teste@gmail.com',
-    matricula:             '190099999',
-    password:              'senhaDicente',
-    password_confirmation: 'senhaDicente',
-    role:                  'discente'
-  )
-  visit login_path
-  fill_in 'email',    with: 'discente.teste@gmail.com'
-  fill_in 'password', with: 'senhaDicente'
-  click_button 'Entrar'
-end
-
 # ==================== AÇÕES ====================
 
 Quando('clico no card da turma {string}') do |nome_turma|
@@ -134,12 +120,6 @@ Quando('acesso {string}') do |pagina|
   end
 end
 
-Quando('tento acessar a página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento - Resultados'
-    visit admin_results_path
-  end
-end
 
 # ==================== VERIFICAÇÕES - CENÁRIOS FELIZES ====================
 
@@ -210,8 +190,4 @@ end
 
 Então('nenhum card de turma é exibido') do
   expect(page).not_to have_selector('.turma-card')
-end
-
-Então('sou redirecionado para o painel do usuário') do
-  expect(current_path).to eq(avaliacoes_path)
 end

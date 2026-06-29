@@ -12,8 +12,8 @@ Dado('que estou logado como Participante de teste') do
     )
   end
   visit login_path
-  fill_in 'login', with: 'participante@gmail.com'
-  fill_in 'password', with: 'password123'
+  fill_in 'Email ou Matrícula', with: 'participante@gmail.com'
+  fill_in 'Senha', with: 'password123'
   click_button 'Entrar'
 end
 

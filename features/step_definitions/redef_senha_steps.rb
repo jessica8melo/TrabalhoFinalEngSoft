@@ -4,9 +4,11 @@
 
 Dado('que recebi um e-mail de solicitação de troca de senha no endereço {string}') do |email|
   @user = User.create!(
-    email:     email,
-    matricula: '190084006',
-    role:      'discente'
+    email:                 email,
+    matricula:             '190084006',
+    role:                  'discente',
+    password:              'placeholder_temp',
+    password_confirmation: 'placeholder_temp'
   )
   @user.generate_reset_token!
 end
