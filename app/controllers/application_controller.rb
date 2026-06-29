@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
 
   def require_admin
     unless admin?
-      redirect_to root_path, alert: "Acesso restrito a administradores."
+      redirect_to avaliacoes_path, alert: "Acesso não autorizado"
     end
   end
 end

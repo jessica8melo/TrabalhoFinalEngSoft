@@ -1,0 +1,110 @@
+<h1>Gerenciamento</h1>
+
+<div class="management-actions">
+  <button type="button" class="btn btn-secondary"
+          onclick="location.href='<%= admin_templates_path %>'">
+    Editar Templates
+  </button>
+
+  <button type="button" class="btn btn-primary" id="btnEnviarFormularios">
+    Enviar Formulários
+  </button>
+
+  <%= link_to "Resultados", admin_results_path, class: "btn btn-info" %>
+</div>
+
+<!-- Modal: Enviar Formulários -->
+<div id="enviarFormulariosModal" class="modal" style="display:none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <h2>Enviar Formulários</h2>
+      <div id="modalFormError" class="alert alert-danger" style="display:none;"></div>
+
+      <form id="formEnviarFormulario" action="<%= admin_forms_path %>" method="post">
+        <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+        <div class="form-group">
+          <label for="template_id">Template</label>
+          <select id="template_id" name="template_id">
+            <option value="">Selecione um template</option>
+            <% @templates.each do |t| %>
+              <option value="<%= t.id %>"><%= t.nome %></option>
+            <% end %>
+          </select>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Selecionar</th>
+              <th>Nome</th>
+              <th>Semestre</th>
+              <th>Código</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @turmas.each do |turma| %>
+              <tr>
+                <td>
+                  <input type="checkbox" name="turma_ids[]" value="<%= turma.id %>">
+                </td>
+                <td><%= turma.nome || turma.disciplina&.name %></td>
+                <td><%= turma.semester %></td>
+                <td><%= turma.classCode %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <% if @turmas.empty? %>
+          <p>Nenhuma turma disponível</p>
+        <% end %>
+
+        <button type="submit" class="btn btn-primary"
+                <%= "disabled" if @turmas.empty? %>>Enviar</button>
+      </form>
+
+      <button type="button" class="btn" id="btnFecharModal">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    var openBtn  = document.getElementById("btnEnviarFormularios");
+    var closeBtn = document.getElementById("btnFecharModal");
+    var modal    = document.getElementById("enviarFormulariosModal");
+    var form     = document.getElementById("formEnviarFormulario");
+    var errorDiv = document.getElementById("modalFormError");
+
+    function showModalError(msg) {
+      errorDiv.textContent = msg;
+      errorDiv.style.display = "block";
+    }
+
+    if (openBtn) openBtn.addEventListener("click", function() {
+      errorDiv.style.display = "none";
+      modal.style.display = "block";
+    });
+
+    if (closeBtn) closeBtn.addEventListener("click", function() {
+      modal.style.display = "none";
+    });
+
+    if (form) form.addEventListener("submit", function(e) {
+      var templateId   = document.getElementById("template_id").value;
+      var checkedBoxes = form.querySelectorAll("input[type='checkbox']:checked");
+
+      if (!templateId) {
+        e.preventDefault();
+        showModalError("Selecione um template para o formulário");
+        return;
+      }
+      if (checkedBoxes.length === 0) {
+        e.preventDefault();
+        showModalError("Selecione ao menos uma turma");
+        return;
+      }
+    });
+  })();
+</script>

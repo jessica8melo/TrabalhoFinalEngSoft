@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_16_200000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_17_000008) do
   create_table "discentes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "curso"
@@ -45,6 +45,34 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_200000) do
     t.index ["turma_id"], name: "index_docentes_on_turma_id"
   end
 
+  create_table "form_responses", force: :cascade do |t|
+    t.text "answers"
+    t.datetime "created_at", null: false
+    t.integer "form_id", null: false
+    t.integer "turma_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["form_id"], name: "index_form_responses_on_form_id"
+    t.index ["turma_id"], name: "index_form_responses_on_turma_id"
+    t.index ["user_id"], name: "index_form_responses_on_user_id"
+  end
+
+  create_table "forms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "end_date"
+    t.datetime "start_date"
+    t.integer "template_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["template_id"], name: "index_forms_on_template_id"
+  end
+
+  create_table "forms_turmas", id: false, force: :cascade do |t|
+    t.integer "form_id", null: false
+    t.integer "turma_id", null: false
+    t.index ["form_id", "turma_id"], name: "index_forms_turmas_on_form_id_and_turma_id", unique: true
+    t.index ["turma_id", "form_id"], name: "index_forms_turmas_on_turma_id_and_form_id"
+  end
+
   create_table "formularios", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "deadline"
@@ -63,6 +91,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_200000) do
     t.string "tipo_pergunta"
     t.datetime "updated_at", null: false
     t.index ["formulario_id"], name: "index_perguntas_on_formulario_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "kind", null: false
+    t.integer "template_id", null: false
+    t.text "text", null: false
+    t.datetime "updated_at", null: false
+    t.index ["template_id"], name: "index_questions_on_template_id"
   end
 
   create_table "respostas", force: :cascade do |t|
@@ -91,17 +128,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_200000) do
     t.text "descricao"
     t.string "nome", null: false
     t.integer "parent_template_id"
+    t.string "semester"
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
+    t.integer "user_id"
     t.integer "version", default: 1, null: false
     t.index ["parent_template_id"], name: "index_templates_on_parent_template_id"
     t.index ["user_id"], name: "index_templates_on_user_id"
+  end
+
+  create_table "turma_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "turma_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["turma_id", "user_id"], name: "index_turma_memberships_on_turma_id_and_user_id", unique: true
+    t.index ["turma_id"], name: "index_turma_memberships_on_turma_id"
+    t.index ["user_id"], name: "index_turma_memberships_on_user_id"
   end
 
   create_table "turmas", force: :cascade do |t|
     t.string "classCode"
     t.datetime "created_at", null: false
     t.integer "disciplina_id", null: false
+    t.string "nome"
     t.string "semester"
     t.string "time"
     t.datetime "updated_at", null: false
@@ -110,10 +159,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_200000) do
 
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "departamento"
     t.string "email"
     t.datetime "invitation_sent_at"
     t.string "invitation_token"
     t.string "matricula"
+    t.string "nome"
     t.string "password_digest"
     t.datetime "reset_sent_at"
     t.string "reset_token"
@@ -123,13 +174,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_16_200000) do
 
   add_foreign_key "discentes", "turmas"
   add_foreign_key "docentes", "turmas"
+  add_foreign_key "form_responses", "forms"
+  add_foreign_key "form_responses", "turmas"
+  add_foreign_key "form_responses", "users"
+  add_foreign_key "forms", "templates"
   add_foreign_key "formularios", "turmas"
   add_foreign_key "perguntas", "formularios"
+  add_foreign_key "questions", "templates"
   add_foreign_key "respostas", "formularios"
   add_foreign_key "respostas", "perguntas"
   add_foreign_key "respostas", "users"
   add_foreign_key "sigaa_logs", "users"
   add_foreign_key "templates", "templates", column: "parent_template_id"
   add_foreign_key "templates", "users"
+  add_foreign_key "turma_memberships", "turmas"
+  add_foreign_key "turma_memberships", "users"
   add_foreign_key "turmas", "disciplinas"
 end

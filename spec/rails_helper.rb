@@ -70,7 +70,16 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
   Capybara.default_driver    = :rack_test
-  Capybara.javascript_driver = :selenium_chrome_headless
+
+  Capybara.register_driver :selenium_firefox_headless do |app|
+    options = Selenium::WebDriver::Firefox::Options.new
+    options.add_argument("--headless")
+    options.binary = "/snap/firefox/current/usr/lib/firefox/firefox"
+    Capybara::Selenium::Driver.new(app, browser: :firefox, options: options)
+  end
+
+  Capybara.javascript_driver = :selenium_firefox_headless
+  Capybara.server            = :puma, { Silent: true }
 
   config.before(:suite) do
     DatabaseCleaner.strategy = :truncation

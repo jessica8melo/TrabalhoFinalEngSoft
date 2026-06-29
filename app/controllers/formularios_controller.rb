@@ -2,7 +2,7 @@ class FormulariosController < ApplicationController
   layout "dashboard"
 
   def index
-    @turmas = current_user.turmas
+    @turmas = current_user.sigaa_turmas
     @formularios = Formulario.where(turma_id: @turmas.pluck(:id))
   end
 
