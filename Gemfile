@@ -56,7 +56,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   # Gems para a Entrega 3 (Sprint 3)
-  gem "saikuro"
+  gem "saikuro", require: false
   gem "rubycritic", require: false
   gem "simplecov", require: false
   gem "rdoc"

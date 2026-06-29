@@ -89,10 +89,6 @@ Então('vejo os detalhes completos como {string}, {string}, {string}, {string}')
   expect(page).to have_content(info4) # Data de Término
 end
 
-Então('vejo um botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Então('vejo a quantidade de questões do formulário') do
   expect(page).to have_content('questões')
 end
@@ -360,10 +356,6 @@ Então('vejo o formulário com os dados previamente preenchidos') do
   expect(page).to have_field(with: 'Resposta anterior')
 end
 
-Então('vejo um botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Então('as respostas anteriores estão mantidas') do
   expect(page).to have_field(with: 'Resposta anterior')
 end
@@ -481,10 +473,6 @@ Então('o formulário expirado não aparece na lista') do
   expect(page).not_to have_content('Avaliação Expirada')
 end
 
-Então('vejo um botão {string}') do |botao|
-  expect(page).to have_button(botao)
-end
-
 Dado('que tentei abrir um formulário após seu deadline') do
   @class = Turma.create!(
     classCode:     'CIC0105',
@@ -510,10 +498,6 @@ Quando('acesso a página {string} e o servidor retorna erro') do |pagina|
   # Simula erro no servidor
   allow(Form).to receive(:for_user).and_raise(StandardError)
   visit avaliacoes_path
-end
-
-Então('vejo um botão {string}') do |botao|
-  expect(page).to have_button(botao)
 end
 
 Então('nenhum formulário é exibido') do
