@@ -1,11 +1,11 @@
 require "rails_helper"
 
 RSpec.describe SigaaSyncService do
-  let(:user) { double("User", admin?: true) }
+  let(:user) { User.create!(email: 'test@unb.br', matricula: '9999', role: 'admin', password: 'password123', password_confirmation: 'password123') }
 
   before do
     allow(SigaaApi).to receive(:fetch_data)
-      .and_return(File.read(Rails.root.join("spec/fixtures/sigaa.json")))
+      .and_return('[{"id":1}]')
 
     allow(SigaaImporter).to receive(:import_classes)
       .and_return(success: true)

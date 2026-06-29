@@ -1,10 +1,21 @@
+# Controller responsável por gerenciar a sessão dos usuários (login e logout)
 class SessionsController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
 
+  # Exibe a página de login
+  #
+  # Argumentos: Nenhum
+  # Retorno: Nenhum
+  # Efeitos Colaterais: Renderiza a view de login
   def new
     # renderizar a página de login
   end
 
+  # Autentica o usuário e cria a sessão
+  #
+  # Argumentos: params[:login], params[:password]
+  # Retorno: Nenhum
+  # Efeitos Colaterais: Cria sessão, redireciona ou renderiza erro de credenciais.
   def create
     user = User.find_by_login(params[:login])
     
@@ -19,6 +30,11 @@ class SessionsController < ApplicationController
     end
   end
 
+  # Destrói a sessão do usuário (Logout)
+  #
+  # Argumentos: Nenhum
+  # Retorno: Nenhum
+  # Efeitos Colaterais: Limpa sessão e redireciona para a tela de login.
   def destroy
     session[:user_id] = nil
     redirect_to login_path, flash: { logout: "Logout realizado com sucesso!" }
