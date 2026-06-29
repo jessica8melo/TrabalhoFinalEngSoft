@@ -3,6 +3,9 @@ class User < ApplicationRecord
   has_secure_password validations: false
 
   has_many :respostas, dependent: :destroy
+  has_many :turma_memberships, dependent: :destroy
+  has_many :turmas, through: :turma_memberships
+  has_many :form_responses, dependent: :destroy
 
   validates :email, uniqueness: true, allow_blank: false
   validates :matricula, uniqueness: true, allow_blank: false
@@ -59,18 +62,18 @@ class User < ApplicationRecord
                  end
   end
 
-  # Retorna turmas vinculadas ao usuário
+  # Retorna turmas vinculadas ao usuário via importação SIGAA (legado)
   #
   # Argumentos: Nenhum
-  # Retorno: Collection
+  # Retorno: ActiveRecord::Relation ou Array vazio
   # Efeitos Colaterais: Consulta no BD
-  def turmas
+  def sigaa_turmas
     if discente?
       Turma.where(id: Discente.where(matricula: matricula).select(:turma_id))
     elsif docente?
       Turma.where(id: Docente.where(usuario: matricula).select(:turma_id))
     else
-      []
+      Turma.none
     end
   end
 

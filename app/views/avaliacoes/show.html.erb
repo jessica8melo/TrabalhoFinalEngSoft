@@ -1,0 +1,29 @@
+<% if flash[:notice] %>
+  <div class="alert alert-success"><%= flash[:notice] %></div>
+<% end %>
+<% if flash[:alert] %>
+  <div class="alert alert-danger"><%= flash[:alert] %></div>
+<% end %>
+
+<h1>Avaliação — <%= @turma.classCode %></h1>
+
+<%= form_with url: responder_avaliacao_path(@turma), method: :post, local: true do |f| %>
+  <% @questions.each_with_index do |question, idx| %>
+    <div class="questao">
+      <p><strong><%= question.text %></strong></p>
+
+      <% if question.kind == "radio" %>
+        <% ["Sim", "Não", "Parcialmente"].each do |opcao| %>
+          <label>
+            <input type="radio" name="answers[<%= idx %>]" value="<%= opcao %>">
+            <%= opcao %>
+          </label>
+        <% end %>
+      <% else %>
+        <textarea name="answers[<%= idx %>]" rows="3"></textarea>
+      <% end %>
+    </div>
+  <% end %>
+
+  <button type="submit" class="btn-enviar-formulario btn btn-primary">Enviar Avaliação</button>
+<% end %>

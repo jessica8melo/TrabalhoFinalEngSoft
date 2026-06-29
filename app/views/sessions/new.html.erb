@@ -4,8 +4,8 @@
 
         <%= form_with url: login_path do |form| %>
             <div class="field">
-                <%= form.label :login, "Email ou Matrícula" %>
-                <%= form.text_field :login, required: true, placeholder: "Email ou Matrícula" %>
+                <%= form.label :login, "Email ou Matrícula", for: "email" %>
+                <%= form.text_field :login, id: "email", required: true, placeholder: "Email ou Matrícula" %>
             </div>
             <div class="field">
                 <%= form.label :password, "Senha" %>

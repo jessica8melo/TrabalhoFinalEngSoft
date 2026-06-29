@@ -148,6 +148,18 @@ Quando('não marco o checkbox de nenhuma turma na tabela') do
   end
 end
 
+Quando('marco o checkbox de uma turma na tabela') do
+  within('.modal table tbody') do
+    first("input[type='checkbox']").check
+  end
+end
+
+Quando('o modal de {string} é aberto') do |_nome_modal|
+  within('.modal') do
+    expect(page).to have_selector('table')
+  end
+end
+
 # ==================== VERIFICAÇÕES — CENÁRIOS FELIZES ====================
 
 Então('o formulário fica disponível para os discentes da turma {string}') do |codigo_turma|

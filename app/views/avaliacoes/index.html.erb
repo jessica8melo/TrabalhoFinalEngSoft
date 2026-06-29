@@ -1,0 +1,20 @@
+<% if flash[:notice] %>
+  <div class="alert alert-success"><%= flash[:notice] %></div>
+<% end %>
+<% if flash[:alert] %>
+  <div class="alert alert-danger"><%= flash[:alert] %></div>
+<% end %>
+
+<h1>Minhas Avaliações</h1>
+
+<% if @turmas_com_form.empty? %>
+  <p>Nenhuma avaliação disponível no momento.</p>
+<% else %>
+  <div class="turmas-list">
+    <% @turmas_com_form.each do |turma| %>
+      <div class="turma-card">
+        <%= link_to turma.classCode, avaliacao_path(turma) %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

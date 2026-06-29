@@ -23,7 +23,18 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :imports, only: [:index, :create]
+    get  "management",          to: "management#index",   as: "management"
+    get  "results",             to: "results#index",      as: "results"
+    resources :results, only: [:show] do
+      member { get :csv }
+    end
+    resources :templates, only: [:index, :create, :update, :destroy]
+    resources :forms,     only: [:create]
   end
+
+  get  "avaliacoes",          to: "avaliacoes#index",    as: "avaliacoes"
+  get  "avaliacoes/:id",      to: "avaliacoes#show",     as: "avaliacao"
+  post "avaliacoes/:id/responder", to: "avaliacoes#responder", as: "responder_avaliacao"
 
   get   "esqueci-senha",          to: "password_resets#new",    as: "new_password_reset"
   post  "esqueci-senha",          to: "password_resets#create", as: "password_resets"
