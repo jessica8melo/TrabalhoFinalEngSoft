@@ -1,12 +1,14 @@
 # language: pt
 
+@javascript
 Funcionalidade: Gerar template de formulário
     Como um Administrador
     Quero criar um template de formulário contendo as questões do formulário
     A fim de gerar formulários de avaliações para avaliar o desempenho das turmas
 
     Contexto:
-        Dado que estou logado como Administrador
+        Dado que existem templates de avaliação cadastrados no sistema
+        E que estou logado como Administrador
         E estou na página "Gerenciamento"
         E clico no botão "Editar Templates"
         Então sou redirecionado para a página "Gerenciamento - Templates"
@@ -50,6 +52,7 @@ Funcionalidade: Gerar template de formulário
         E preencho o campo "Nome do template" com "Avaliação Completa"
         E seleciono o tipo "Radio" na "Questão 1"
         E preencho o campo "Texto" da "Questão 1" com "Avalie o desempenho geral"
+        E preencho o campo "Opções" da "Questão 1" com "Ótimo"
         E clico no botão "+" roxo para adicionar uma nova questão
         E seleciono o tipo "Texto" na "Questão 2"
         E preencho o campo "Texto" da "Questão 2" com "Comentários adicionais"

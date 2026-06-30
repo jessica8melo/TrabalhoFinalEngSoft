@@ -32,12 +32,17 @@ class Admin::TemplatesController < ApplicationController
   # Retorno: Nenhum (redireciona)
   # Efeitos colaterais: Atualiza registro no banco
   def update
-    if @template.update(nome: resolve_nome, semester: template_semester)
-      build_questions(@template, replace: true)
-      flash[:notice] = "Template atualizado com sucesso"
-    else
-      flash[:alert] = @template.errors.full_messages.join(", ")
+    ActiveRecord::Base.transaction do
+      if @template.update(nome: resolve_nome, semester: template_semester)
+        build_questions(@template, replace: true)
+        flash[:notice] = "Template atualizado com sucesso"
+      else
+        flash[:alert] = @template.errors.full_messages.join(", ")
+      end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    flash[:alert] = e.record.errors.full_messages.join(", ")
+  ensure
     redirect_to admin_templates_path
   end
 
@@ -92,12 +97,17 @@ class Admin::TemplatesController < ApplicationController
   # Retorno: ActionDispatch::Response (redirect)
   # Efeitos colaterais: Persiste Template e Questions no banco
   def persist_template(success_msg)
-    if @template.save
-      build_questions(@template)
-      flash[:notice] = success_msg
-    else
-      flash[:alert] = @template.errors.full_messages.join(", ")
+    ActiveRecord::Base.transaction do
+      if @template.save
+        build_questions(@template)
+        flash[:notice] = success_msg
+      else
+        flash[:alert] = @template.errors.full_messages.join(", ")
+      end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    flash[:alert] = e.record.errors.full_messages.join(", ")
+  ensure
     redirect_to admin_templates_path
   end
 
@@ -119,6 +129,19 @@ class Admin::TemplatesController < ApplicationController
   # Efeitos colaterais: Cria registro de Question no banco
   def persist_question(template, q)
     return if q[:text].blank?
-    template.questions.create!(kind: q[:kind].presence || "text", text: q[:text])
+    template.questions.create!(
+      kind: q[:kind].presence || "text",
+      text: q[:text],
+      options: extract_options(q)
+    )
+  end
+
+  # Filtra opções em branco enviadas para uma questão
+  #
+  # Argumentos: q (Hash com possível chave :options)
+  # Retorno: Array de String
+  # Efeitos colaterais: Nenhum
+  def extract_options(q)
+    Array(q[:options]).map(&:to_s).map(&:strip).reject(&:blank?)
   end
 end

@@ -13,10 +13,27 @@ class AvaliacoesController < ApplicationController
     @turmas_com_form = Turma
       .joins(:forms)
       .where(id: turmas_ids)
-      .where("forms.end_date > ?", Time.current)
       .includes(:disciplina)
       .distinct
   end
+
+  # Retorna o formulário mais recente associado à turma
+  #
+  # Argumentos: turma (Turma)
+  # Retorno: Form ou nil
+  def form_for(turma)
+    turma.forms.order(created_at: :desc).first
+  end
+  helper_method :form_for
+
+  # Verifica se o usuário atual já respondeu o formulário informado
+  #
+  # Argumentos: form (Form)
+  # Retorno: Booleano
+  def respondido?(form)
+    form && FormResponse.exists?(form: form, user: current_user)
+  end
+  helper_method :respondido?
 
   # Exibe o formulário de avaliação de uma turma para o discente responder
   #
@@ -46,7 +63,7 @@ class AvaliacoesController < ApplicationController
       answers: build_answers
     )
 
-    redirect_to avaliacoes_path, notice: "Avaliação enviada com sucesso"
+    redirect_to avaliacoes_path, notice: "Avaliação submetida com sucesso!"
   rescue => e
     flash.now[:alert] = "Erro ao enviar avaliação: #{e.message}"
     @questions = @form.template.questions
@@ -101,11 +118,11 @@ class AvaliacoesController < ApplicationController
   # Efeitos Colaterais: Renderiza erro com status unprocessable_entity se faltar resposta.
   def questoes_obrigatorias_faltando?
     @questions = @form.template.questions
-    missing = @questions.where(obrigatoria: true).any? do |question|
-      params[:answers].blank? || params[:answers][question.id.to_s].blank?
-    end
+    @missing_question_ids = @questions.select do |question|
+      question.obrigatoria? && (params[:answers].blank? || params[:answers][question.id.to_s].blank?)
+    end.map(&:id)
 
-    if missing
+    if @missing_question_ids.any?
       flash.now[:alert] = "Por favor, responda todas as questões obrigatórias"
       render "avaliacoes/show", status: :unprocessable_entity
       true
@@ -123,10 +140,10 @@ class AvaliacoesController < ApplicationController
   def build_answers
     return [] unless params[:answers].is_a?(ActionController::Parameters)
 
-    params[:answers].map do |question_id, value|
+    params[:answers].to_unsafe_h.map do |question_id, value|
       {
         "question_id" => question_id.to_i,
-        "value"       => value.is_a?(String) ? value : value.to_unsafe_h
+        "value"       => value.is_a?(String) ? value : value.to_h
       }
     end
   end

@@ -112,7 +112,7 @@ end
 # ==================== REDIRECIONAMENTOS ====================
 
 Então('sou redirecionado para o painel do usuário') do
-  expect(page).to have_current_path(home_path, wait: 10)
+  expect(page).to have_current_path(avaliacoes_path, wait: 10)
 end
 
 Então('sou redirecionado para a página {string}') do |pagina|

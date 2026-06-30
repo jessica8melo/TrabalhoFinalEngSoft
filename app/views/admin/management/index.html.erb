@@ -2,10 +2,7 @@
 
 <div class="management-actions">
   <%= button_to "Atualizar Base SIGAA", "/sigaa/update", method: :post, class: "btn btn-warning", data: { turbo: false } %>
-  <button type="button" class="btn btn-secondary"
-          onclick="location.href='<%= admin_templates_path %>'">
-    Editar Templates
-  </button>
+  <%= button_to "Editar Templates", admin_templates_path, method: :get, class: "btn btn-secondary", data: { turbo: false } %>
 
   <button type="button" class="btn btn-primary" id="btnEnviarFormularios">
     Enviar Formulários

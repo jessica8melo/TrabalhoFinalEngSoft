@@ -9,13 +9,9 @@
 # Então('vejo a mensagem de erro {string}')
 # Então('sou redirecionado para o painel do usuário')
 
-Dado('que estou na página {string}') do |pagina|
-  case pagina
-  when 'Gerenciamento'
-    visit admin_management_path
-  when 'Gerenciamento - Templates'
-    visit admin_templates_path
-  end
+Dado('que existem templates de avaliação cadastrados no sistema') do
+  template = Template.create!(name: 'Avaliação de Monitoria', semester: '2024.1')
+  template.questions.create!(kind: 'text', text: 'Comentários gerais')
 end
 
 Dado('que existe o card do template {string} na listagem') do |nome_template|
@@ -25,7 +21,8 @@ Dado('que existe o card do template {string} na listagem') do |nome_template|
   )
   @template_existente.questions.create!(
     kind: 'radio',
-    text: 'Como você avalia a didática do monitor?'
+    text: 'Como você avalia a didática do monitor?',
+    options: ['Muito bom', 'Bom']
   )
   @template_existente.questions.create!(
     kind: 'text',
@@ -143,10 +140,6 @@ end
 Então('o modal de edição é exibido com os dados atuais do template preenchidos') do
   expect(page).to have_selector('.modal')
   expect(find_field('Nome do template').value).to eq(@template_existente.name)
-end
-
-Quando('altero o campo {string} para {string}') do |campo, novo_valor|
-  fill_in campo, with: novo_valor
 end
 
 Quando('clico no ícone de excluir do template {string}') do |nome_template|

@@ -69,16 +69,31 @@ export default class extends Controller {
     }
 
     const questoes   = document.querySelectorAll("#questoesContainer .questao")
-    let hasTextError = false
+    let hasTextError  = false
+    let hasRadioError = false
 
     questoes.forEach(q => {
       const texto = q.querySelector(".questao-texto").value.trim()
       if (!texto) hasTextError = true
+
+      const tipo = q.querySelector(".questao-tipo").value
+      if (tipo === "radio") {
+        const opcoes = Array.from(q.querySelectorAll(".campo-opcao"))
+          .map(input => input.value.trim())
+          .filter(valor => valor.length > 0)
+        if (opcoes.length === 0) hasRadioError = true
+      }
     })
 
     if (hasTextError) {
       event.preventDefault()
       this._showError("O texto da questão é obrigatório")
+      return
+    }
+
+    if (hasRadioError) {
+      event.preventDefault()
+      this._showError("Questões do tipo Radio devem ter ao menos uma opção")
       return
     }
   }

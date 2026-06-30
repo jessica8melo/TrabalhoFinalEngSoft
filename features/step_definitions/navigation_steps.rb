@@ -9,7 +9,7 @@ Dado(/^estou na página (?:de )?"([^"]*)"$/) do |pagina|
   when 'Avaliações'
     visit avaliacoes_path
   when 'Gerenciamento'
-    visit admin_imports_path # Default to imports
+    visit admin_management_path if respond_to?(:admin_management_path)
   when 'Gerenciamento - Resultados'
     visit admin_results_path if respond_to?(:admin_results_path)
   when 'Gerenciamento - Turmas'

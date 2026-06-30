@@ -12,8 +12,19 @@
 <% else %>
   <div class="turmas-list">
     <% @turmas_com_form.each do |turma| %>
-      <div class="turma-card">
-        <%= link_to turma.classCode, avaliacao_path(turma) %>
+      <% form = form_for(turma) %>
+      <div class="turma-card" id="formulario_<%= form.id %>">
+        <strong><%= turma.classCode %></strong>
+
+        <% if respondido?(form) %>
+          <span class="status">Respondido</span>
+          <p class="ja-respondido">Você já respondeu esta avaliação</p>
+          <%= button_tag "Responder", disabled: true, class: "btn-responder" %>
+        <% elsif form.active? %>
+          <%= link_to "Responder", avaliacao_path(turma), class: "btn-responder" %>
+        <% else %>
+          <p>Avaliação encerrada em <%= form.end_date.strftime("%d/%m/%Y") %></p>
+        <% end %>
       </div>
     <% end %>
   </div>
