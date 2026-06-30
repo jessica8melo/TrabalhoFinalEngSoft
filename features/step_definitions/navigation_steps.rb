@@ -7,7 +7,7 @@ Dado(/^estou na página (?:de )?"([^"]*)"$/) do |pagina|
   when 'página de login'
     visit login_path
   when 'Avaliações'
-    visit formularios_path
+    visit avaliacoes_path
   when 'Gerenciamento'
     visit admin_imports_path # Default to imports
   when 'Gerenciamento - Resultados'

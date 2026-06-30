@@ -8,19 +8,22 @@
 <h1>Avaliação — <%= @turma.classCode %></h1>
 
 <%= form_with url: responder_avaliacao_path(@turma), method: :post, local: true do |f| %>
-  <% @questions.each_with_index do |question, idx| %>
+  <% @questions.each do |question| %>
     <div class="questao">
-      <p><strong><%= question.text %></strong></p>
+      <p>
+        <strong><%= question.text %></strong>
+        <% if question.obrigatoria? %><span class="obrigatoria">*</span><% end %>
+      </p>
 
       <% if question.kind == "radio" %>
         <% ["Sim", "Não", "Parcialmente"].each do |opcao| %>
           <label>
-            <input type="radio" name="answers[<%= idx %>]" value="<%= opcao %>">
+            <input type="radio" name="answers[<%= question.id %>]" value="<%= opcao %>">
             <%= opcao %>
           </label>
         <% end %>
       <% else %>
-        <textarea name="answers[<%= idx %>]" rows="3"></textarea>
+        <textarea name="answers[<%= question.id %>]" rows="3"></textarea>
       <% end %>
     </div>
   <% end %>

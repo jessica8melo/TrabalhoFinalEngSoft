@@ -9,10 +9,6 @@ Rails.application.routes.draw do
 
   get "/home", to: "home#index", as: "home"
 
-  resources :formularios, only: [:index, :show] do
-    resources :respostas, only: [:create]
-  end
-
   get  'definir-senha/:token', to: 'password_sets#new',    as: 'password_set'
   patch 'definir-senha/:token', to: 'password_sets#update'
 

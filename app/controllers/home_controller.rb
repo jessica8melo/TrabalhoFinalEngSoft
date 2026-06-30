@@ -4,7 +4,7 @@ class HomeController < ApplicationController
 
   def index
     if current_user.discente? || current_user.docente?
-      redirect_to formularios_path
+      redirect_to avaliacoes_path
     end
   end
 

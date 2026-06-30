@@ -56,7 +56,7 @@ Então('sou redirecionado para a página de cadastro {string}') do |pagina|
     expect(page.current_path).to include("/definir-senha/")
   when 'painel principal'
     if @user&.discente? || @user&.docente?
-      expect(page).to have_current_path(formularios_path)
+      expect(page).to have_current_path(avaliacoes_path)
     else
       expect(page).to have_current_path(home_path)
     end

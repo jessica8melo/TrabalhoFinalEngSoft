@@ -2,7 +2,6 @@
 class User < ApplicationRecord
   has_secure_password validations: false
 
-  has_many :respostas, dependent: :destroy
   has_many :turma_memberships, dependent: :destroy
   has_many :turmas, through: :turma_memberships
   has_many :form_responses, dependent: :destroy

@@ -3,7 +3,6 @@ class Turma < ApplicationRecord
   belongs_to :disciplina
   has_many :docente_records, class_name: "Docente", dependent: :destroy
   has_many :discente_records, class_name: "Discente", dependent: :destroy
-  has_many :formularios, dependent: :destroy
   has_and_belongs_to_many :forms
 
   has_many :turma_memberships, dependent: :destroy

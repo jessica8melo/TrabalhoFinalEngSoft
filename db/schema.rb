@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_17_000008) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_30_120000) do
   create_table "discentes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "curso"
@@ -61,6 +61,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000008) do
     t.datetime "created_at", null: false
     t.datetime "end_date"
     t.datetime "start_date"
+    t.string "target_audience", default: "ambos", null: false
     t.integer "template_id", null: false
     t.datetime "updated_at", null: false
     t.index ["template_id"], name: "index_forms_on_template_id"
@@ -73,45 +74,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000008) do
     t.index ["turma_id", "form_id"], name: "index_forms_turmas_on_turma_id_and_form_id"
   end
 
-  create_table "formularios", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "deadline"
-    t.text "descricao"
-    t.string "titulo"
-    t.integer "turma_id", null: false
-    t.datetime "updated_at", null: false
-    t.index ["turma_id"], name: "index_formularios_on_turma_id"
-  end
-
-  create_table "perguntas", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.text "enunciado"
-    t.integer "formulario_id", null: false
-    t.boolean "obrigatoria"
-    t.string "tipo_pergunta"
-    t.datetime "updated_at", null: false
-    t.index ["formulario_id"], name: "index_perguntas_on_formulario_id"
-  end
 
   create_table "questions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "kind", null: false
+    t.boolean "obrigatoria", default: false, null: false
     t.integer "template_id", null: false
     t.text "text", null: false
     t.datetime "updated_at", null: false
     t.index ["template_id"], name: "index_questions_on_template_id"
-  end
-
-  create_table "respostas", force: :cascade do |t|
-    t.text "conteudo"
-    t.datetime "created_at", null: false
-    t.integer "formulario_id", null: false
-    t.integer "pergunta_id", null: false
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.index ["formulario_id"], name: "index_respostas_on_formulario_id"
-    t.index ["pergunta_id"], name: "index_respostas_on_pergunta_id"
-    t.index ["user_id"], name: "index_respostas_on_user_id"
   end
 
   create_table "sigaa_logs", force: :cascade do |t|
@@ -129,6 +100,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000008) do
     t.string "nome", null: false
     t.integer "parent_template_id"
     t.string "semester"
+    t.string "status", default: "rascunho", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.integer "version", default: 1, null: false
@@ -178,12 +150,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_17_000008) do
   add_foreign_key "form_responses", "turmas"
   add_foreign_key "form_responses", "users"
   add_foreign_key "forms", "templates"
-  add_foreign_key "formularios", "turmas"
-  add_foreign_key "perguntas", "formularios"
   add_foreign_key "questions", "templates"
-  add_foreign_key "respostas", "formularios"
-  add_foreign_key "respostas", "perguntas"
-  add_foreign_key "respostas", "users"
   add_foreign_key "sigaa_logs", "users"
   add_foreign_key "templates", "templates", column: "parent_template_id"
   add_foreign_key "templates", "users"
