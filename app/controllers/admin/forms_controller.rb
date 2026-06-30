@@ -47,8 +47,23 @@ class Admin::FormsController < ApplicationController
   # Efeitos colaterais: Cria Form e registros em forms_turmas
   def deliver_form(template_id, turma_ids)
     template = Template.find_by(id: template_id)
-    form     = Form.create!(template: template, start_date: Time.current, end_date: 1.month.from_now)
+    form     = Form.create!(template: template, start_date: Time.current, end_date: resolve_end_date)
     form.turmas << Turma.where(id: turma_ids)
     redirect_to admin_management_path, notice: "Formulário enviado com sucesso"
+  end
+
+  # Resolve a data final do formulário a partir do parâmetro enviado pelo
+  # usuário, ou usa o padrão de 1 mês caso esteja em branco ou inválida
+  #
+  # Argumentos: Nenhum (lê params[:end_date])
+  # Retorno: Time
+  # Efeitos colaterais: Nenhum
+  def resolve_end_date
+    return 1.month.from_now if params[:end_date].blank?
+
+    parsed = Date.parse(params[:end_date]) rescue nil
+    return 1.month.from_now if parsed.nil?
+
+    parsed.end_of_day
   end
 end

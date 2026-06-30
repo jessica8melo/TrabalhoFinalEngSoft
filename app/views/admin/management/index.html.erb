@@ -58,6 +58,12 @@
           <p>Nenhuma turma disponível</p>
         <% end %>
 
+        <div class="form-group">
+          <label for="end_date">Prazo final (opcional)</label>
+          <input type="date" id="end_date" name="end_date" min="<%= Date.current %>">
+          <small>Se não preenchido, o prazo padrão será de 1 mês a partir de hoje.</small>
+        </div>
+
         <button type="submit" class="btn btn-primary"
                 <%= "disabled" if @turmas.empty? %>>Enviar</button>
       </form>
