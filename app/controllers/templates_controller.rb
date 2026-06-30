@@ -6,12 +6,38 @@ class TemplatesController < ApplicationController
   def index
     @templates = Template.order(:nome)
 
-    if params[:q].present?
-      @templates = @templates.where(
-        "nome ILIKE ?",
-        "%#{params[:q]}%"
-      )
+    if params[:simulate_error] == "true"
+      raise StandardError, "Falha simulada no servidor"
     end
+
+    if params[:q].present?
+      if ActiveRecord::Base.connection.adapter_name.downcase.include?("sqlite")
+        @templates = @templates.where(
+          "lower(nome) LIKE ?",
+          "%#{params[:q].downcase}%"
+        )
+      else
+        @templates = @templates.where(
+          "nome ILIKE ?",
+          "%#{params[:q]}%"
+        )
+      end
+    end
+
+    per_page = 5
+    page = params[:page].to_i
+    page = 1 if page < 1
+
+    @has_previous_page = page > 1
+    @has_next_page = @templates.offset(page * per_page).limit(1).exists?
+    @current_page = page
+    @templates = @templates.offset((page - 1) * per_page).limit(per_page)
+  rescue StandardError
+    flash.now[:alert] = "Erro ao carregar a lista de templates"
+    @templates = Template.none
+    @has_previous_page = false
+    @has_next_page = false
+    @current_page = 1
   end
 
   def show

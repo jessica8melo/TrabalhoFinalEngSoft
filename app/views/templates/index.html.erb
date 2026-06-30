@@ -23,6 +23,16 @@
       </li>
     <% end %>
   </ul>
+
+  <nav class="pagination">
+    <% if @has_previous_page %>
+      <%= link_to "Anterior", templates_path(request.query_parameters.merge(page: @current_page - 1)) %>
+    <% end %>
+
+    <% if @has_next_page %>
+      <%= link_to "Próxima", templates_path(request.query_parameters.merge(page: @current_page + 1)) %>
+    <% end %>
+  </nav>
 <% else %>
   <p>Não há templates disponíveis.</p>
 <% end %>

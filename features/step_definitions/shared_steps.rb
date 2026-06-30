@@ -81,6 +81,12 @@ Quando('acesso a página {string}') do |pagina|
     visit admin_templates_path
   when 'Gerenciamento - Formulários Ativos'
     visit admin_forms_path if respond_to?(:admin_forms_path)
+  when 'de templates'
+    if defined?(@simulate_template_error) && @simulate_template_error
+      visit templates_path(simulate_error: true)
+    else
+      visit templates_path
+    end
   else
     visit '/'
   end
@@ -96,6 +102,8 @@ Quando('tento acessar a página {string}') do |pagina|
     visit admin_results_path
   when 'Gerenciamento - Turmas'
     visit admin_classes_path
+  when 'de templates'
+    visit templates_path
   else
     visit '/'
   end
