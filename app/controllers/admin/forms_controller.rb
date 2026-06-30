@@ -47,9 +47,26 @@ class Admin::FormsController < ApplicationController
   # Efeitos colaterais: Cria Form e registros em forms_turmas
   def deliver_form(template_id, turma_ids)
     template = Template.find_by(id: template_id)
-    form     = Form.create!(template: template, start_date: Time.current, end_date: resolve_end_date)
+    form     = Form.create!(
+      template:     template,
+      start_date:   Time.current,
+      end_date:     resolve_end_date,
+      destinatario: resolve_destinatario
+    )
     form.turmas << Turma.where(id: turma_ids)
     redirect_to admin_management_path, notice: "Formulário enviado com sucesso"
+  end
+
+  # Resolve o público-alvo do formulário a partir do parâmetro enviado.
+  # Mantém "discente" como padrão para não quebrar fluxos que ainda não
+  # enviam esse campo (ex.: integrações antigas)
+  #
+  # Argumentos: Nenhum (lê params[:destinatario])
+  # Retorno: String
+  # Efeitos colaterais: Nenhum
+  def resolve_destinatario
+    valor = params[:destinatario].to_s.strip
+    %w[discente docente].include?(valor) ? valor : "discente"
   end
 
   # Resolve a data final do formulário a partir do parâmetro enviado pelo

@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   end
 
   get  "avaliacoes",          to: "avaliacoes#index",    as: "avaliacoes"
+  get  "avaliacoes/:id/detalhes", to: "avaliacoes#detalhes", as: "detalhes_avaliacao"
   get  "avaliacoes/:id",      to: "avaliacoes#show",     as: "avaliacao"
   post "avaliacoes/:id/responder", to: "avaliacoes#responder", as: "responder_avaliacao"
 

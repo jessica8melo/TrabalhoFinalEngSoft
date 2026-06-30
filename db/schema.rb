@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_30_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_30_150000) do
   create_table "discentes", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "curso"
@@ -59,6 +59,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_30_140000) do
 
   create_table "forms", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.string "destinatario", default: "discente", null: false
     t.datetime "end_date"
     t.datetime "start_date"
     t.integer "template_id", null: false

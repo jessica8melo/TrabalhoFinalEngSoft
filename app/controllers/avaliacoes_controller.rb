@@ -1,7 +1,7 @@
 # Controller para o painel de avaliações do discente
 class AvaliacoesController < ApplicationController
   layout "dashboard"
-  before_action :set_turma_and_form, only: [:show, :responder]
+  before_action :set_turma_and_form, only: [:show, :detalhes, :responder]
 
   # Lista as turmas com formulários disponíveis para o usuário logado
   #
@@ -12,17 +12,18 @@ class AvaliacoesController < ApplicationController
     turmas_ids = current_user.turmas.pluck(:id)
     @turmas_com_form = Turma
       .joins(:forms)
-      .where(id: turmas_ids)
+      .where(id: turmas_ids, forms: { destinatario: current_user.role })
       .includes(:disciplina)
       .distinct
   end
 
-  # Retorna o formulário mais recente associado à turma
+  # Retorna o formulário mais recente destinado ao papel do usuário atual,
+  # associado à turma
   #
   # Argumentos: turma (Turma)
   # Retorno: Form ou nil
   def form_for(turma)
-    turma.forms.order(created_at: :desc).first
+    turma.forms.where(destinatario: current_user.role).order(created_at: :desc).first
   end
   helper_method :form_for
 
@@ -34,6 +35,19 @@ class AvaliacoesController < ApplicationController
     form && FormResponse.exists?(form: form, user: current_user)
   end
   helper_method :respondido?
+
+  # Exibe os detalhes de um formulário (turma, template, datas, quantidade
+  # de questões) antes do discente decidir respondê-lo
+  #
+  # Argumentos: params[:id] — id da Turma
+  # Retorno: Nenhum (renderiza view)
+  # Efeitos colaterais: Nenhum
+  def detalhes
+    return if @form.nil?
+
+    @questions = @form.template.questions
+    redirect_to avaliacoes_path, alert: "Você já respondeu esta avaliação" if ja_respondeu?
+  end
 
   # Exibe o formulário de avaliação de uma turma para o discente responder
   #
@@ -74,8 +88,37 @@ class AvaliacoesController < ApplicationController
 
   def set_turma_and_form
     @turma = Turma.find(params[:id])
-    @form  = @turma.forms.where("end_date > ?", Time.current).first
-    redirect_to avaliacoes_path, alert: "Formulário não disponível" unless @form
+    return redirect_to avaliacoes_path, alert: "Você não está matriculado nesta turma" unless matriculado_na_turma?
+
+    @form = @turma.forms.where("end_date > ?", Time.current).where(destinatario: current_user.role).first
+    redirect_para_formulario_expirado if @form.nil?
+  end
+
+  # Verifica se o usuário logado está matriculado na turma atual
+  #
+  # Argumentos: Nenhum (usa @turma e current_user)
+  # Retorno: Booleano
+  def matriculado_na_turma?
+    TurmaMembership.exists?(turma: @turma, user: current_user)
+  end
+
+  # Redireciona informando a data em que o formulário mais recente destinado
+  # ao papel do usuário expirou, ou uma mensagem genérica caso nenhum
+  # formulário desse tipo tenha existido para a turma (inclusive quando o
+  # único formulário existente é destinado a outro papel, ex.: docente
+  # tentando acessar formulário de dicente e vice-versa)
+  #
+  # Argumentos: Nenhum (usa @turma e current_user)
+  # Retorno: Nenhum
+  # Efeitos colaterais: Redireciona com flash de alerta
+  def redirect_para_formulario_expirado
+    formulario_expirado = @turma.forms.where(destinatario: current_user.role).order(end_date: :desc).first
+
+    if formulario_expirado
+      redirect_to avaliacoes_path, alert: "Este formulário expirou em #{formulario_expirado.end_date.strftime('%d/%m/%Y')}"
+    else
+      redirect_to avaliacoes_path, alert: "Formulário não disponível"
+    end
   end
 
   # Realiza as validações necessárias antes de salvar a resposta.
