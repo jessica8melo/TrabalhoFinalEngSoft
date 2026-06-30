@@ -12,8 +12,7 @@ class Admin::ResultsController < ApplicationController
   # Retorno: Nenhum (renderiza view)
   # Efeitos colaterais: Nenhum
   def index
-    turma_ids = FormResponse.distinct.pluck(:turma_id)
-    @turmas   = Turma.includes(:disciplina, :docentes).where(id: turma_ids)
+    @turmas = Turma.includes(:disciplina, :docentes).joins(:forms).distinct
   end
 
   # Exibe detalhes de resultados de uma turma específica
@@ -23,6 +22,9 @@ class Admin::ResultsController < ApplicationController
   # Efeitos colaterais: Nenhum
   def show
     @responses = FormResponse.where(turma: @turma).includes(:user, form: { template: :questions })
+    @form      = @turma.forms.order(created_at: :desc).first
+    @template  = @form&.template
+    @question_summaries = build_question_summaries(@responses, @template)
   end
 
   # Gera e faz download de CSV com as respostas da turma
@@ -95,5 +97,47 @@ class Admin::ResultsController < ApplicationController
   # Efeitos colaterais: Nenhum
   def questions_for(fr)
     fr.form&.template&.questions || []
+  end
+
+  # Monta um resumo por questão: contagem de opções para Radio,
+  # lista de respostas para Texto
+  #
+  # Argumentos: responses (ActiveRecord::Relation), template (Template ou nil)
+  # Retorno: Array de Hash
+  # Efeitos colaterais: Nenhum
+  def build_question_summaries(responses, template)
+    return [] unless template
+
+    template.questions.map do |question|
+      valores = collect_values(responses, question)
+      {
+        question:      question,
+        option_counts: question.kind == "radio" ? tally_options(question, valores) : nil,
+        respostas:     question.kind == "radio" ? nil : valores
+      }
+    end
+  end
+
+  # Coleta os valores de resposta de uma questão específica
+  #
+  # Argumentos: responses (ActiveRecord::Relation), question (Question)
+  # Retorno: Array de Hash com value/user/created_at
+  # Efeitos colaterais: Nenhum
+  def collect_values(responses, question)
+    responses.flat_map do |fr|
+      Array(fr.answers)
+        .select { |a| a["question_id"] == question.id }
+        .map { |a| { value: a["value"], user: fr.user&.nome, created_at: fr.created_at } }
+    end
+  end
+
+  # Conta as respostas recebidas para cada opção de uma questão Radio
+  #
+  # Argumentos: question (Question), valores (Array de Hash)
+  # Retorno: Hash opção => contagem
+  # Efeitos colaterais: Nenhum
+  def tally_options(question, valores)
+    base = Array(question.options).index_with(0)
+    base.merge(valores.group_by { |v| v[:value] }.transform_values(&:size))
   end
 end

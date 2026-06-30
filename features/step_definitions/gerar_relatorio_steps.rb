@@ -32,7 +32,11 @@ Dado('que a turma {string} possui respostas registradas') do |nome_turma|
   @turma.docentes << @docente
 
   @template = Template.create!(name: 'Avaliação Padrão')
-  @questao1  = @template.questions.create!(kind: 'radio', text: 'Como você avalia a didática?')
+  @questao1  = @template.questions.create!(
+    kind: 'radio',
+    text: 'Como você avalia a didática?',
+    options: ['Muito bom', 'Bom', 'Regular', 'Ruim']
+  )
   @questao2  = @template.questions.create!(kind: 'text',  text: 'Comentários adicionais')
 
   @form = Form.create!(
@@ -71,7 +75,7 @@ end
 Dado('que a turma {string} não possui nenhuma resposta registrada') do |nome_turma|
   @disciplina = Disciplina.create!(
     code: 'FGA0002',
-    name: 'Métodos de Desenvolvimento'
+    name: 'Software Básico'
   )
   @docente = User.create!(
     email:                 'prof.ciclano@unb.br',
@@ -79,7 +83,7 @@ Dado('que a turma {string} não possui nenhuma resposta registrada') do |nome_tu
     password:              'senhaDocente2',
     password_confirmation: 'senhaDocente2',
     role:                  'docente',
-    nome:                  'Prof. Ciclano'
+    nome:                  'Prof. Ladeira'
   )
   @turma_sem_respostas = Turma.create!(
     classCode:  'T02',
@@ -108,6 +112,7 @@ end
 # ==================== AÇÕES ====================
 
 Quando('clico no card da turma {string}') do |nome_turma|
+  visit admin_results_path
   within('.turma-card', text: nome_turma.split(' - ').first) do
     click_on nome_turma.split(' - ').first
   end

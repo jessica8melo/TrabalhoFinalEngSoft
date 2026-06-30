@@ -26,5 +26,5 @@ Dado(/^estou na página (?:de )?"([^"]*)"$/) do |pagina|
 end
 
 Quando(/^clico no botão "([^"]*)"$/) do |botao|
-  click_button botao
+  click_link_or_button botao
 end

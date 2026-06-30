@@ -7,6 +7,31 @@
 <% if @responses.empty? %>
   <p>Esta turma ainda não possui respostas registradas</p>
 <% else %>
+  <h2><%= @template&.nome %></h2>
+  <p class="total-respostas">Total de respostas recebidas: <%= @responses.size %></p>
+
+  <% @question_summaries.each do |summary| %>
+    <div class="questao-resumo" data-tipo="<%= summary[:question].kind %>">
+      <h3><%= summary[:question].text %></h3>
+
+      <% if summary[:question].kind == "radio" %>
+        <ul class="opcoes-resumo">
+          <% summary[:option_counts].each do |opcao, count| %>
+            <li><%= opcao %>: <%= count %></li>
+          <% end %>
+        </ul>
+      <% else %>
+        <ul class="respostas-texto">
+          <% summary[:respostas].each do |resposta| %>
+            <li><%= resposta[:value] %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+
+  <hr>
+  <h3>Respostas detalhadas</h3>
   <table>
     <thead>
       <tr><th>Discente</th><th>Questão</th><th>Resposta</th></tr>
