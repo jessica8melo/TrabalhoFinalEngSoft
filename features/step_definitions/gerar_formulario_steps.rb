@@ -56,6 +56,7 @@ end
 Dado('que não existem turmas cadastradas no sistema') do
   Turma.destroy_all
   @template = Template.create!(name: 'Avaliação de Monitoria')
+  visit admin_management_path if current_path == admin_management_path
 end
 
 Dado('que o formulário baseado no template {string} foi enviado para a turma {string}') do |nome_template, codigo_turma|

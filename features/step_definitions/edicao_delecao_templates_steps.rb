@@ -26,7 +26,7 @@ Então("a versão anterior deve ser preservada") do
 end
 
 Dado("existem formulários já criados baseados na versão atual do template") do
-  @formulario = Form.create!(template: @template)
+  @formulario = Form.create!(template: @template, start_date: 1.day.ago, end_date: 1.month.from_now)
 end
 
 Então("os formulários já criados devem permanecer vinculados à versão antiga") do
@@ -87,7 +87,7 @@ Quando("tento editar um template que não existe") do
 end
 
 Dado("existem formulários baseados nesse template") do
-  Form.create!(template: @template)
+  Form.create!(template: @template, start_date: 1.day.ago, end_date: 1.month.from_now)
 end
 
 Quando("tento salvar o template com dados inválidos") do
@@ -115,7 +115,7 @@ end
 
 Dado("que existe um template com muitos formulários vinculados") do
   @template = Template.create!(nome: "Modelo Antigo")
-  3.times { Form.create!(template: @template) }
+  3.times { Form.create!(template: @template, start_date: 1.day.ago, end_date: 1.month.from_now) }
 end
 
 Então("a nova versão deve ser criada com sucesso") do

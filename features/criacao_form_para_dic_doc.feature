@@ -1,12 +1,14 @@
 # language: pt
 
+@javascript
 Funcionalidade: Criar formulário para Docentes e Dicentes
     Como um Administrador
     Quero escolher criar um formulário para os docentes ou os dicentes de uma turma
     A fim de avaliar o desempenho de uma matéria
 
     Contexto:
-        Dado que estou logado como Administrador
+        Dado que existem turmas e templates para criação de formulários
+        E que estou logado como Administrador
         E estou na página "Gerenciamento"
         E clico no botão "Criar Formulário"
         Então um modal é exibido com os campos "Tipo de Destinatário", "Template", "Turma(s)" e data de disponibilidade

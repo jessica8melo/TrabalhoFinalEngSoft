@@ -5,6 +5,16 @@ end
 # Controller para criação de formulários de avaliação pelo administrador
 class Admin::FormsController < ApplicationController
   before_action :require_admin
+  layout "dashboard"
+
+  # Lista os formulários ativos (ainda dentro do período de vigência)
+  #
+  # Argumentos: Nenhum
+  # Retorno: Nenhum (renderiza view)
+  # Efeitos colaterais: Nenhum
+  def index
+    @forms = Form.includes(:template, :turmas).where("end_date > ?", Time.current).order(created_at: :desc)
+  end
 
   # Cria um formulário baseado em template e o envia para as turmas selecionadas
   #
@@ -12,6 +22,7 @@ class Admin::FormsController < ApplicationController
   # Retorno: Nenhum (redireciona)
   # Efeitos colaterais: Cria Form e associações com turmas no banco
   def create
+    return redirect_missing_destinatario if params[:destinatario].blank?
     return redirect_missing_template if params[:template_id].blank?
 
     turma_ids = Array(params[:turma_ids]).reject(&:blank?)
@@ -21,6 +32,15 @@ class Admin::FormsController < ApplicationController
   end
 
   private
+
+  # Redireciona com erro quando tipo de destinatário não foi selecionado
+  #
+  # Argumentos: Nenhum
+  # Retorno: ActionDispatch::Response (redirect)
+  # Efeitos colaterais: Nenhum
+  def redirect_missing_destinatario
+    redirect_to admin_management_path, alert: "Selecione o tipo de destinatário (Dicentes ou Docentes)"
+  end
 
   # Redireciona com erro quando template não foi selecionado
   #
@@ -47,19 +67,34 @@ class Admin::FormsController < ApplicationController
   # Efeitos colaterais: Cria Form e registros em forms_turmas
   def deliver_form(template_id, turma_ids)
     template = Template.find_by(id: template_id)
-    form     = Form.create!(
+    form     = Form.new(
       template:     template,
-      start_date:   Time.current,
-      end_date:     resolve_end_date,
+      start_date:   parse_date(params[:start_date])&.beginning_of_day,
+      end_date:     parse_date(params[:end_date])&.end_of_day,
       destinatario: resolve_destinatario
     )
-    form.turmas << Turma.where(id: turma_ids)
-    redirect_to admin_management_path, notice: "Formulário enviado com sucesso"
+
+    if form.save
+      form.turmas << Turma.where(id: turma_ids)
+      redirect_to admin_management_path, notice: success_message(form.destinatario, turma_ids.size)
+    else
+      redirect_to admin_management_path, alert: form.errors.full_messages.to_sentence
+    end
+  end
+
+  # Monta a mensagem de sucesso de acordo com o destinatário e a
+  # quantidade de turmas selecionadas
+  #
+  # Argumentos: destinatario (String), quantidade_turmas (Integer)
+  # Retorno: String
+  def success_message(destinatario, quantidade_turmas)
+    return "Formulário criado com sucesso para #{quantidade_turmas} turmas" if quantidade_turmas > 1
+
+    destino = destinatario == "discente" ? "dicentes" : "docentes"
+    "Formulário criado com sucesso para #{destino}"
   end
 
   # Resolve o público-alvo do formulário a partir do parâmetro enviado.
-  # Mantém "discente" como padrão para não quebrar fluxos que ainda não
-  # enviam esse campo (ex.: integrações antigas)
   #
   # Argumentos: Nenhum (lê params[:destinatario])
   # Retorno: String
@@ -69,18 +104,20 @@ class Admin::FormsController < ApplicationController
     %w[discente docente].include?(valor) ? valor : "discente"
   end
 
-  # Resolve a data final do formulário a partir do parâmetro enviado pelo
-  # usuário, ou usa o padrão de 1 mês caso esteja em branco ou inválida
+  # Converte uma string de data (dd/mm/yyyy ou yyyy-mm-dd) em Date
   #
-  # Argumentos: Nenhum (lê params[:end_date])
-  # Retorno: Time
+  # Argumentos: valor (String)
+  # Retorno: Date ou nil
   # Efeitos colaterais: Nenhum
-  def resolve_end_date
-    return 1.month.from_now if params[:end_date].blank?
+  def parse_date(valor)
+    return nil if valor.blank?
 
-    parsed = Date.parse(params[:end_date]) rescue nil
-    return 1.month.from_now if parsed.nil?
-
-    parsed.end_of_day
+    Date.strptime(valor, "%d/%m/%Y")
+  rescue ArgumentError
+    begin
+      Date.parse(valor)
+    rescue ArgumentError, TypeError
+      nil
+    end
   end
 end

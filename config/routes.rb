@@ -25,7 +25,7 @@ Rails.application.routes.draw do
       member { get :csv }
     end
     resources :templates, only: [:index, :create, :update, :destroy]
-    resources :forms,     only: [:create]
+    resources :forms,     only: [:index, :create]
   end
 
   get  "avaliacoes",          to: "avaliacoes#index",    as: "avaliacoes"

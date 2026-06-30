@@ -103,8 +103,12 @@ Dado('que tentei abrir um formulário após seu deadline') do
 
   # Simula o prazo vencendo enquanto o participante já estava com a página
   # de detalhes aberta — a validação precisa acontecer no servidor, não só
-  # esconder o botão na tela
-  @form.update!(end_date: Time.zone.local(2026, 5, 26, 23, 59, 59))
+  # esconder o botão na tela. Move start_date junto para não violar a
+  # regra de end_date >= start_date.
+  @form.update!(
+    start_date: Time.zone.local(2026, 5, 19, 0, 0, 0),
+    end_date:   Time.zone.local(2026, 5, 26, 23, 59, 59)
+  )
 end
 
 Então('não consigo acessar o formulário') do

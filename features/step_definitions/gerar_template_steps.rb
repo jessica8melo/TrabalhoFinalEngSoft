@@ -124,6 +124,8 @@ Quando('deixo o campo de opções {string} em branco') do |campo|
     within('.modal .questao', match: :first) do
       fill_in 'Opções', with: ''
     end
+  elsif campo == 'Tipo de Destinatário'
+    find('#destinatario').select('Selecione')
   else
     fill_in campo, with: ''
   end

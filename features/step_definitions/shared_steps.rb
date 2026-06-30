@@ -80,7 +80,7 @@ Quando('acesso a página {string}') do |pagina|
   when 'Gerenciamento - Templates'
     visit admin_templates_path
   when 'Gerenciamento - Formulários Ativos'
-    visit admin_forms_path if respond_to?(:admin_forms_path)
+    visit admin_forms_path
   when 'de templates'
     if defined?(@simulate_template_error) && @simulate_template_error
       visit templates_path(simulate_error: true)
@@ -148,7 +148,7 @@ end
 
 Quando('não seleciono nenhum template no dropdown {string}') do |campo|
   within('.modal') do
-    expect(find("select[name='template']").value).to be_blank
+    expect(find("select[name='template_id']").value).to be_blank
   end
 end
 

@@ -2,6 +2,29 @@
 
 # ==================== CONTEXTO ====================
 
+Dado('que existem turmas e templates para criação de formulários') do
+  disciplina = Disciplina.find_or_create_by!(code: 'CIC0001') do |d|
+    d.name = 'Engenharia de Software'
+  end
+
+  @turma_cic0105 = Turma.find_or_create_by!(classCode: 'CIC0105') do |t|
+    t.disciplina = disciplina
+    t.nome       = 'Engenharia de Software'
+    t.semester   = '2026.1'
+    t.time       = '10:00'
+  end
+
+  @turma_cic0202 = Turma.find_or_create_by!(classCode: 'CIC0202') do |t|
+    t.disciplina = disciplina
+    t.nome       = 'Engenharia de Software'
+    t.semester   = '2026.1'
+    t.time       = '14:00'
+  end
+
+  Template.find_or_create_by!(nome: 'Avaliação Engenharia de Software')
+  Template.find_or_create_by!(nome: 'Avaliação de Didática')
+end
+
 Então('um modal é exibido com os campos {string}, {string}, {string} e data de disponibilidade') do |campo1, campo2, campo3|
   expect(page).to have_selector('.modal')
   expect(page).to have_field(campo1)
@@ -16,44 +39,43 @@ Quando('seleciono {string} no campo {string}') do |opcao, campo|
 end
 
 Quando('seleciono a turma {string} no campo {string}') do |turma, campo|
-  select turma, from: campo
+  select_field = find_field(campo)
+  select_field.find(:option, turma).select_option
 end
 
 Quando('preencho a data de início com {string}') do |data|
-  fill_in 'data_inicio', with: data
+  fill_in 'data_inicio', with: Date.strptime(data, '%d/%m/%Y').strftime('%Y-%m-%d')
 end
 
 Quando('preencho a data de término com {string}') do |data|
-  fill_in 'data_termino', with: data
+  fill_in 'data_termino', with: Date.strptime(data, '%d/%m/%Y').strftime('%Y-%m-%d')
 end
 
 Quando('clico no campo {string} novamente para adicionar mais turmas') do |campo|
-  # Simula clique adicional em campo multi-select
-  find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").click
+  # Em um <select multiple>, select_option já adiciona a nova opção sem
+  # desmarcar as anteriores — nenhuma ação adicional é necessária aqui.
 end
 
 Quando('preencho as datas de vigência') do
-  fill_in 'data_inicio', with: '26/05/2026'
-  fill_in 'data_termino', with: '01/06/2026'
+  fill_in 'data_inicio', with: '2026-05-26'
+  fill_in 'data_termino', with: '2026-06-01'
 end
 
 Quando('não seleciono nenhuma turma no campo {string}') do |campo|
   # Campo já começa sem seleção
-  expect(find("select[name='#{campo.downcase.gsub(/\s+/, '_')}']").value).to be_nil
+  expect(find('#turma_ids').value).to eq([])
 end
 
 # ==================== CENÁRIOS FELIZES - VERIFICAÇÕES ====================
 
 Então('o formulário fica disponível para os dicentes da turma {string}') do |turma|
-  # Verifica se o formulário foi criado e associado à turma
-  expect(Form.last.destiny_type).to eq('discente')
-  expect(Form.last.classes.pluck(:code)).to include(turma)
+  expect(Form.last.destinatario).to eq('discente')
+  expect(Form.last.turmas.pluck(:classCode)).to include(turma)
 end
 
 Então('o formulário fica disponível para os docentes da turma {string}') do |turma|
-  # Verifica se o formulário foi criado e associado à turma
-  expect(Form.last.destiny_type).to eq('docente')
-  expect(Form.last.classes.pluck(:code)).to include(turma)
+  expect(Form.last.destinatario).to eq('docente')
+  expect(Form.last.turmas.pluck(:classCode)).to include(turma)
 end
 
 Então('vejo a mensagem de sucesso {string} para {int} turmas') do |mensagem, quantidade|
@@ -62,24 +84,25 @@ Então('vejo a mensagem de sucesso {string} para {int} turmas') do |mensagem, qu
 end
 
 Então('o formulário fica disponível para os dicentes das turmas {string} e {string}') do |turma1, turma2|
-  expect(Form.last.classes.pluck(:code)).to include(turma1, turma2)
+  expect(Form.last.turmas.pluck(:classCode)).to include(turma1, turma2)
 end
 
-Dado('que criei um formulário para dicentes da turma {string} com o template {string}') do |turma, template|
+Dado('que criei um formulário para dicentes da turma {string} com o template {string}') do |turma, nome_template|
+  template = Template.find_by(nome: nome_template) || Template.create!(nome: nome_template)
   @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: template,
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+    template:     template,
+    destinatario: 'discente',
+    start_date:   1.day.ago,
+    end_date:     1.day.from_now
   )
-  @turma = Class.find_by(code: turma)
-  @form.classes << @turma
+  @turma = Turma.find_by(classCode: turma)
+  @form.turmas << @turma
 end
 
 Então('vejo na tabela uma linha com os dados do formulário criado') do
   expect(page).to have_selector('table')
-  expect(page).to have_content(@form.template_name)
-  expect(page).to have_content(@turma.code)
+  expect(page).to have_content(@form.template.nome)
+  expect(page).to have_content(@turma.classCode)
 end
 
 Então('a linha contém {string}, {string}, {string} e as datas de vigência') do |destiny, turma, template|
@@ -89,25 +112,27 @@ Então('a linha contém {string}, {string}, {string} e as datas de vigência') d
 end
 
 Dado('que um formulário foi criado para dicentes da turma {string}') do |turma|
+  template = Template.find_by(nome: 'Avaliação de Engenharia de Software') || Template.create!(nome: 'Avaliação de Engenharia de Software')
   @form = Form.create!(
-    destiny_type: 'discente',
-    template_name: 'Avaliação de Engenharia de Software',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+    template:     template,
+    destinatario: 'discente',
+    start_date:   1.day.ago,
+    end_date:     1.day.from_now
   )
-  @turma = Class.find_by(code: turma)
-  @form.classes << @turma if @turma
+  @turma = Turma.find_by(classCode: turma)
+  @form.turmas << @turma if @turma
 end
 
 Dado('que um formulário foi criado para docentes da turma {string}') do |turma|
+  template = Template.find_by(nome: 'Avaliação de Didática') || Template.create!(nome: 'Avaliação de Didática')
   @form = Form.create!(
-    destiny_type: 'docente',
-    template_name: 'Avaliação de Didática',
-    start_date: 1.day.ago,
-    end_date: 1.day.from_now
+    template:     template,
+    destinatario: 'docente',
+    start_date:   1.day.ago,
+    end_date:     1.day.from_now
   )
-  @turma = Class.find_by(code: turma)
-  @form.classes << @turma if @turma
+  @turma = Turma.find_by(classCode: turma)
+  @form.turmas << @turma if @turma
 end
 
 Então('um Dicente matriculado na turma {string} acessa o painel de Avaliações') do |turma|
@@ -119,7 +144,7 @@ Então('um Dicente matriculado na turma {string} acessa o painel de Avaliações
     role:                  'discente'
   )
   # Associa dicente à turma
-  @dicente.classes << @turma if @turma
+  @dicente.turmas << @turma if @turma
   
   # Login como dicente
   visit login_path
@@ -132,12 +157,12 @@ Então('um Dicente matriculado na turma {string} acessa o painel de Avaliações
 end
 
 Então('o dicente visualiza o card do formulário dentro do período de vigência') do
-  expect(page).to have_selector('.form-card')
-  expect(page).to have_content(@form.template_name)
+  expect(page).to have_selector('.turma-card')
+  expect(page).to have_content(@form.template.nome)
 end
 
 Então('o card exibe o nome do template e a data de término') do
-  expect(page).to have_content(@form.template_name)
+  expect(page).to have_content(@form.template.nome)
   expect(page).to have_content(@form.end_date.strftime('%d/%m/%Y'))
 end
 
@@ -150,7 +175,7 @@ Então('um Docente vinculado à turma {string} acessa o painel de Avaliações')
     role:                  'docente'
   )
   # Associa docente à turma
-  @docente.classes << @turma if @turma
+  @docente.turmas << @turma if @turma
   
   # Login como docente
   visit login_path
@@ -163,12 +188,21 @@ Então('um Docente vinculado à turma {string} acessa o painel de Avaliações')
 end
 
 Então('o docente visualiza o card do formulário dentro do período de vigência') do
-  expect(page).to have_selector('.form-card')
-  expect(page).to have_content(@form.template_name)
+  expect(page).to have_selector('.turma-card')
+  expect(page).to have_content(@form.template.nome)
 end
 
 # ==================== CENÁRIOS TRISTES - VERIFICAÇÕES ====================
 
-Então('a data de término anterior à data de início') do
-  fill_in 'data_termino', with: '20/05/2026'
+Então('o modal é exibido') do
+  expect(page).to have_selector('.modal')
+end
+
+Quando('deixo os campos de data em branco') do
+  fill_in 'data_inicio', with: ''
+  fill_in 'data_termino', with: ''
+end
+
+Então('o campo {string} está vazio') do |campo|
+  expect(find('#turma_ids')).not_to have_selector('option')
 end
