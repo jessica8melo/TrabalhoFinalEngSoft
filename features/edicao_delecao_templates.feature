@@ -23,7 +23,7 @@ Funcionalidade: Edição e deleção de templates
     Dado que existe um template criado
     E o template não está em uso por formulários
     Quando solicito a exclusão do template
-    E confirmo a exclusão
+    E confirmo a exclusão do template
     Então o template deve ser removido com sucesso
 
   Cenário: Cancelar exclusão de template
@@ -75,11 +75,13 @@ Funcionalidade: Edição e deleção de templates
   Cenário: Registrar histórico de versões do template
     Dado que existe um template criado
     Quando eu edito o template
+    E salvo as alterações
     Então a criação da nova versão deve ser registrada no histórico
     E deve conter usuário e data da alteração
 
   Cenário: Editar template com múltiplos formulários vinculados
     Dado que existe um template com muitos formulários vinculados
     Quando eu edito o template
+    E salvo as alterações
     Então a nova versão deve ser criada com sucesso
     E os formulários devem permanecer vinculados à versão anterior

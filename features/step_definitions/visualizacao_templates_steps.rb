@@ -8,6 +8,10 @@ Dado("que existem templates cadastrados no sistema") do
   )
 end
 
+Dado("existem templates cadastrados no sistema") do
+  step "que existem templates cadastrados no sistema"
+end
+
 Dado("que não existem templates cadastrados no sistema") do
   Template.destroy_all
 end

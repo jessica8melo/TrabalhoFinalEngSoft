@@ -28,18 +28,32 @@ class TemplatesController < ApplicationController
       novo.parent_template = @template
     end
 
+    novo.user = current_user if novo.respond_to?(:user=)
+    novo.version = @template.version + 1 if novo.respond_to?(:version=)
+
     if novo.update(template_params)
       redirect_to templates_path,
                   notice: "Nova versão do template criada com sucesso."
     else
-      render :edit, status: :unprocessable_entity
+      flash[:alert] = novo.errors.full_messages.to_sentence
+      redirect_to edit_template_path(@template)
     end
   end
 
   def destroy
-    @template.destroy
-    redirect_to templates_path,
-              notice: "Template removido com sucesso."
+    if @template.forms.exists?
+      redirect_to templates_path,
+                alert: "Template está em uso por formulários"
+      return
+    end
+
+    if @template.destroy
+      redirect_to templates_path,
+                notice: "Template removido com sucesso."
+    else
+      redirect_to templates_path,
+                alert: @template.errors.full_messages.to_sentence
+    end
   end
 
   private
