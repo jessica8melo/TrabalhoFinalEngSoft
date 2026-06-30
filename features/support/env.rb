@@ -20,6 +20,12 @@ end
 # Mantém o banco limpo entre cenários
 DatabaseCleaner.strategy = :truncation
 
+After do
+  # Evita que a sessão/cookies do navegador (Selenium) vazem entre
+  # cenários consecutivos marcados com @javascript
+  Capybara.reset_sessions!
+end
+
 # Capybara usa Selenium para cenários com @javascript
 Capybara.default_driver    = :rack_test       # rápido, sem JS
 Capybara.javascript_driver = :selenium_chrome_headless  # para @javascript

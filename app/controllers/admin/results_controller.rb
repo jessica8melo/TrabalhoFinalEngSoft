@@ -34,6 +34,11 @@ class Admin::ResultsController < ApplicationController
   # Efeitos colaterais: Envia arquivo ao cliente
   def csv
     responses = FormResponse.where(turma: @turma).includes(:user, form: { template: :questions })
+
+    if responses.empty?
+      return redirect_to admin_result_path(@turma), alert: "Esta turma ainda não possui respostas registradas"
+    end
+
     send_data build_csv(responses),
       type:        "text/csv; charset=utf-8",
       filename:    "resultados_turma_#{@turma.id}.csv",

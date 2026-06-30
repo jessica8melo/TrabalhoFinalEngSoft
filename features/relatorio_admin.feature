@@ -13,6 +13,8 @@ Funcionalidade: Gerar relatório do Administrador
   # ==================== CENÁRIOS FELIZES ====================
 
     Cenário: Visualizar listagem de turmas com resultados disponíveis
+        Dado que a turma "Engenharia de Software - 2026.1 - Prof. Genaina" possui respostas registradas
+        Quando acesso "Gerenciamento - Resultados"
         Então vejo uma listagem de cards com turmas
         E cada card exibe o "Nome da matéria", o "semestre" e o "Professor"
 

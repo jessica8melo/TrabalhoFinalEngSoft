@@ -164,11 +164,12 @@ Então('cada linha corresponde a uma resposta submetida por um discente') do
 end
 
 Então('o arquivo CSV baixado contém uma coluna para cada questão do formulário') do
-  csv_content    = page.body
-  headers        = CSV.parse(csv_content, headers: true).headers
-  questao_textos = @form.template.questions.pluck(:text)
+  csv_content     = page.body
+  rows            = CSV.parse(csv_content, headers: true)
+  questao_textos  = @form.template.questions.pluck(:text)
+  textos_presentes = rows.map { |row| row['Questão'] }
   questao_textos.each do |texto|
-    expect(headers).to include(texto)
+    expect(textos_presentes).to include(texto)
   end
 end
 
@@ -176,10 +177,10 @@ Então('os valores correspondem às respostas selecionadas ou digitadas pelos di
   csv_content = page.body
   rows        = CSV.parse(csv_content, headers: true)
   expect(rows.length).to be >= 1
-  rows.each do |row|
-    @form.template.questions.each do |questao|
-      expect(row[questao.text]).not_to be_nil
-    end
+  @form.template.questions.each do |questao|
+    linhas_da_questao = rows.select { |row| row['Questão'] == questao.text }
+    expect(linhas_da_questao).not_to be_empty
+    linhas_da_questao.each { |row| expect(row['Resposta']).not_to be_blank }
   end
 end
 

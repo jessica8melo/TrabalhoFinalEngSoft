@@ -144,6 +144,12 @@ Então('o modal de edição é exibido com os dados atuais do template preenchid
   expect(find_field('Nome do template').value).to eq(@template_existente.name)
 end
 
+Quando('altero o campo {string} para {string}') do |campo, valor|
+  within('.modal') do
+    fill_in campo, with: valor
+  end
+end
+
 Quando('clico no ícone de excluir do template {string}') do |nome_template|
   within('.template-card', text: nome_template) do
     find('.btn-excluir').click

@@ -1,41 +1,46 @@
 # language: pt
 
+@javascript
 Funcionalidade: Gerar formulário de avaliação
     Como um Administrador
     Quero criar um formulário baseado em um template para as turmas que eu escolher
     A fim de avaliar o desempenho das turmas no semestre atual
 
     Contexto:
-        Dado que estou logado como Administrador
+        Dado que existem turmas e templates para criação de formulários
+        E que estou logado como Administrador
         E estou na página "Gerenciamento"
-        E clico no botão "Enviar Formulários"
-        Então um modal é exibido com um dropdown de "Template" e uma tabela de turmas
+        E clico no botão "Criar Formulário"
+        Então um modal é exibido com os campos "Tipo de Destinatário", "Template", "Turma(s)" e data de disponibilidade
 
   # ==================== CENÁRIOS FELIZES ====================
 
-    Cenário: Visualizar modal de envio de formulário com turmas disponíveis
+    Cenário: Visualizar modal de criação de formulário com turmas disponíveis
         Então o modal exibe o campo "Template" com um dropdown
-        E o modal exibe uma tabela com as colunas "Nome", "Semestre" e "Código"
-        E cada linha da tabela possui um checkbox para seleção
-        E vejo o botão "Enviar"
+        E o modal exibe o campo "Turma(s)" com um seletor de múltipla escolha
+        E vejo o botão "Criar"
 
     Cenário: Enviar formulário para uma turma selecionada
-        Dado que existem turmas cadastradas no sistema
-        Quando seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
-        E marco o checkbox da turma "Estudos Em" com semestre "2026.1" e código "CIC0105"
-        E clico no botão "Enviar"
+        Quando seleciono "Dicentes" no campo "Tipo de Destinatário"
+        E seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
+        E seleciono a turma "CIC0105" no campo "Turma(s)"
+        E preencho a data de início com "26/05/2026"
+        E preencho a data de término com "01/06/2026"
+        E clico no botão "Criar"
         Então o modal é fechado
-        E vejo a mensagem de sucesso "Formulário enviado com sucesso"
+        E vejo a mensagem de sucesso "Formulário criado com sucesso para dicentes"
         E o formulário fica disponível para os discentes da turma "CIC0105"
 
     Cenário: Enviar formulário para múltiplas turmas simultaneamente
-        Dado que existem ao menos duas turmas cadastradas no sistema
-        Quando seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
-        E marco o checkbox da turma "Estudos Em" com semestre "2026.1" e código "CIC0105"
-        E marco o checkbox da segunda turma "Estudos Em" com semestre "2026.1" e código "CIC0106"
-        E clico no botão "Enviar"
+        Quando seleciono "Dicentes" no campo "Tipo de Destinatário"
+        E seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
+        E seleciono a turma "CIC0105" no campo "Turma(s)"
+        E seleciono a turma "CIC0202" no campo "Turma(s)"
+        E preencho a data de início com "26/05/2026"
+        E preencho a data de término com "01/06/2026"
+        E clico no botão "Criar"
         Então o modal é fechado
-        E vejo a mensagem de sucesso "Formulário enviado com sucesso"
+        E vejo a mensagem de sucesso "Formulário criado com sucesso para 2 turmas"
         E o formulário fica disponível para os discentes das duas turmas selecionadas
 
     Cenário: Formulário enviado aparece disponível para os discentes da turma
@@ -53,28 +58,32 @@ Funcionalidade: Gerar formulário de avaliação
   # ==================== CENÁRIOS TRISTES ====================
 
     Cenário: Tentativa de enviar formulário sem selecionar um template
-        Dado que existem turmas cadastradas no sistema
-        Quando não seleciono nenhum template no dropdown "Template"
-        E marco o checkbox de uma turma na tabela
-        E clico no botão "Enviar"
+        Quando seleciono "Dicentes" no campo "Tipo de Destinatário"
+        E não seleciono nenhum template no dropdown "Template"
+        E seleciono a turma "CIC0105" no campo "Turma(s)"
+        E preencho as datas de vigência
+        E clico no botão "Criar"
         Então o modal permanece aberto
         E vejo a mensagem de erro "Selecione um template para o formulário"
 
     Cenário: Tentativa de enviar formulário sem selecionar nenhuma turma
-        Quando seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
-        E não marco o checkbox de nenhuma turma na tabela
-        E clico no botão "Enviar"
+        Quando seleciono "Dicentes" no campo "Tipo de Destinatário"
+        E seleciono o template "Avaliação Engenharia de Software" no dropdown "Template"
+        E não seleciono nenhuma turma no campo "Turma(s)"
+        E preencho as datas de vigência
+        E clico no botão "Criar"
         Então o modal permanece aberto
         E vejo a mensagem de erro "Selecione ao menos uma turma"
 
-    Cenário: Nenhuma turma cadastrada exibida na tabela do modal
+    Cenário: Nenhuma turma cadastrada exibida no campo do modal
         Dado que não existem turmas cadastradas no sistema
-        Quando o modal de "Enviar Formulários" é aberto
-        Então a tabela de turmas está vazia
+        Quando clico no botão "Criar Formulário"
+        Então o modal é exibido
+        E o campo "Turma(s)" está vazio
         E vejo a mensagem "Nenhuma turma disponível"
-        E o botão "Enviar" está desabilitado
+        E o botão "Criar" está desabilitado
 
-    Cenário: Tentativa de acesso ao envio de formulários por usuário não administrador
+    Cenário: Tentativa de acesso à criação de formulários por usuário não administrador
         Dado que estou logado como Discente
         Quando tento acessar a página "Gerenciamento"
         Então sou redirecionado para o painel do usuário
