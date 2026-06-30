@@ -1,6 +1,7 @@
 # Controller responsável pela sincronização de dados via API do SIGAA
 class SigaaController < ApplicationController
-  before_action :authenticate_user!
+  before_action :require_login
+  before_action :require_admin
 
   # Inicia o processo de atualização do banco de dados chamando o serviço de sincronização
   #
