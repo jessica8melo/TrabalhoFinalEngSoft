@@ -1,4 +1,4 @@
-# 📚 Wiki — Sprint 2
+# 📚 Wiki — Sprint 3
 ## TrabalhoFinalEngSoft | CAMAAR — Sistema de Avaliação Acadêmica
 
 ---
@@ -125,6 +125,7 @@ O CAMAAR é um sistema web desenvolvido em Ruby on Rails para a gestão de avali
 - Usuários com perfil **discente** da respectiva turma podem visualizar e responder formulário enviado pelo administrador 
 - Em caso de erro no processo, o sistema deve exibir mensagem indicando o problema
 - O formulário deve ser feito a partir de um template e deve se referir a uma turma específica
+- **(Sprint 3)** O administrador pode definir um prazo (deadline) customizado para o formulário no momento da criação, em vez de usar apenas um prazo padrão
 
 ---
 
@@ -309,30 +310,68 @@ Regras de Negócio:
 
 ---
 
-## 📈 Velocity — Story Points da Sprint 2
+## 🛠️ Sprint 3 — Consolidação, Refatoração e Qualidade
+
+Diferente das sprints anteriores, a Sprint 3 concentrou boa parte do esforço em **fechar as funcionalidades que ficaram pendentes da Sprint 2** (#1, #2, #3, #4, #5, #6, #9, #11 a #16) e em um trabalho amplo de **qualidade de código e consolidação técnica**, feito em cima de todo o projeto. Os principais destaques:
+
+### 🔗 Unificação dos sistemas de formulário
+O projeto tinha evoluído com **dois sistemas paralelos** para representar formulários e respostas: um mais antigo (`Formulario` / `Pergunta` / `Resposta`) e outro mais novo (`Template` / `Form` / `Question` / `FormResponse`). Isso causava inconsistências e duplicidade de regras de negócio. Na Sprint 3:
+- Os controllers e models legados (`formularios_controller`, `respostas_controller`, `formulario.rb`, `pergunta.rb`, `resposta.rb`) foram **removidos**
+- Uma migração de consolidação (`ConsolidateFormSystems`) migra os dados existentes das tabelas antigas para o sistema novo e adiciona as colunas que faltavam para cobrir regras de negócio que só existiam no sistema legado: `questions.obrigatoria`, `templates.status` (rascunho/publicado — feature #5) e `forms.target_audience` (público-alvo — feature #16)
+- O sistema `Template` / `Form` / `Question` / `FormResponse` passou a ser a única fonte de verdade para as funcionalidades de formulário
+
+### 🧹 Refatoração e redução de complexidade
+- Refatoração de `SigaaImporter` e `SigaaSyncService` para reduzir complexidade ciclomática e ABC Score (Issue #1)
+- Refatoração geral dos controllers para a Entrega 3, com foco em reduzir ABC Score
+- Remoção de código duplicado nos step definitions do Cucumber, centralizado em `features/step_definitions/shared_steps.rb`
+- Correção de uma inconsistência no fluxo de login identificada durante a sprint
+
+### 📖 Documentação de código
+- Adição de comentários de classe (RDoc) em controllers e services (`Sessions`, `Sigaa`, `Templates`, entre outros) para eliminar alertas do **Reek**
+- Objetivo: manter o código autoexplicativo e em conformidade com as ferramentas de análise estática adotadas pelo grupo
+
+### 🧪 Ferramentas de qualidade adicionadas (Gemfile)
+| Gem | Finalidade |
+|-----|------------|
+| `rubocop-rails-omakase` | Padronização de estilo de código Ruby/Rails |
+| `reek` | Detecção de code smells |
+| `saikuro` | Análise de complexidade ciclomática |
+| `rubycritic` | Relatório consolidado de qualidade de código |
+| `simplecov` | Cobertura de testes |
+| `rdoc` | Geração de documentação a partir dos comentários RDoc |
+
+### ✅ Testes
+Testes RSpec e Cucumber foram criados/completados para todas as funcionalidades que ainda não tinham cobertura ao final da Sprint 2: importação/atualização via SIGAA (#1, #11), cadastro de usuários (#3), geração de relatório (#4), geração e visualização de templates (#5, #14, #15), geração de formulários e formulários customizados por público-alvo (#6, #16), visualização de formulários para responder (#12) e visualização de resultados (#13). Também foram adicionados testes para os controllers refatorados (`Admin::ImportsController`, `PasswordResetsController`, `PasswordSetsController`), cobrindo *happy* e *sad paths*.
+
+---
+
+## 📈 Velocity — Story Points da Sprint 3
+
+Todas as histórias planejadas desde a Sprint 2 foram concluídas ao final da Sprint 3, incluindo suas respectivas suítes de teste (RSpec/Cucumber).
 
 | Issue | Funcionalidade | Story Points | Status |
 |-------|---------------|:------------:|--------|
-| #1 | Importar dados do SIGAA | 5 | 🔲 A fazer |
-| #2 | Responder Formulário | 5 | 🔲 A fazer |
-| #3 | Cadastrar usuários do sistema | 3 | 🔲 A fazer |
-| #4 | Gerar relatório do administrador | 3 | 🔲 A fazer |
-| #5 | Gerar Template de Formulário | 8 | 🔲 A fazer |
-| #6 | Gerar Formulário de Avaliação | 5 | 🔲 A fazer |
+| #1 | Importar dados do SIGAA | 5 | ✅ Feito |
+| #2 | Responder Formulário | 5 | ✅ Feito |
+| #3 | Cadastrar usuários do sistema | 3 | ✅ Feito |
+| #4 | Gerar relatório do administrador | 3 | ✅ Feito |
+| #5 | Gerar Template de Formulário | 8 | ✅ Feito |
+| #6 | Gerar Formulário de Avaliação | 5 | ✅ Feito |
 | #7 | Sistema de Login | 3 | ✅ Feito |
 | #8 | Sistema de Definição de Senha | 3 | ✅ Feito |
-| #9 | Gerenciamento por Departamento | 8 | 🔲 A fazer |
+| #9 | Gerenciamento por Departamento | 8 | ✅ Feito |
 | #10 | Redefinição de Senha | 2 | ✅ Feito |
-| #11 | Atualizar Base com SIGAA | 8 | 🔲 A fazer |
-| #12 | Visualização de Formulários | 3 | 🔲 A fazer |
-| #13 | Visualização de Resultados | 3 | 🔲 A fazer |
-| #14 | Visualização dos Templates | 2 | 🔲 A fazer |
-| #15 | Edição e Deleção de Templates | 3 | 🔲 A fazer |
-| #16 | Criação de Formulário Docente/Discente | 5 | 🔲 A fazer |
+| #11 | Atualizar Base com SIGAA | 8 | ✅ Feito |
+| #12 | Visualização de Formulários | 3 | ✅ Feito |
+| #13 | Visualização de Resultados | 3 | ✅ Feito |
+| #14 | Visualização dos Templates | 2 | ✅ Feito |
+| #15 | Edição e Deleção de Templates | 3 | ✅ Feito |
+| #16 | Criação de Formulário Docente/Discente | 5 | ✅ Feito |
 | | **Total da Sprint** | **69** | |
-| | **Velocity (concluídos)** | **8** | #7 + #8 + #10 |
+| | **Velocity Sprint 2 (referência)** | **8** | #7 + #8 + #10 |
+| | **Velocity Sprint 3 (concluídos)** | **69** | Todas as histórias |
 
-> 💡 **O que é Velocity?** É a soma dos story points das histórias **concluídas** ao final da sprint. Ao fim da Sprint 2, atualize a coluna "Status" e some apenas os pontos das histórias entregues. Esse número será a velocity de referência para planejar a Sprint 3.
+> 💡 **O que é Velocity?** É a soma dos story points das histórias **concluídas** ao final da sprint. A Sprint 2 fechou com velocity 8 (apenas o módulo de autenticação). Na Sprint 3, o grupo concluiu as 13 histórias restantes, além de dedicar parte do esforço à consolidação técnica e à qualidade de código descritas acima.
 
 ---
 
@@ -342,10 +381,10 @@ O grupo adota o seguinte fluxo de branches:
 
 ```
 main
-└── sprint-2
-    ├── feature/#7-login
-    ├── feature/#8-definicao-senha
-    ├── feature/#10-redefinicao-senha
+└── sprint-3
+    ├── sprint-3-julia
+    ├── sprint-3-matheus
+    ├── fix/#7-sistema_de_login
     └── ...
 ```
 
@@ -353,7 +392,9 @@ main
 
 - **`main`** — branch de produção, recebe merges apenas via Pull Request revisada
 - **`sprint-N`** — branch da sprint atual, base para todas as features da sprint
-- **`feature/#N-nome-curto`** — uma branch por issue, criada a partir de `sprint-N`
+- **`sprint-N-nome`** / **`feature/#N-nome-curto`** / **`fix/#N-nome-curto`** — branches individuais de trabalho, criadas a partir de `sprint-N` (por integrante ou por issue, conforme a natureza da tarefa) e mescladas de volta em `sprint-N` via Pull Request
+
+> Na Sprint 3, além das branches por issue, o grupo também utilizou branches por integrante (ex.: `sprint-3-julia`, `sprint-3-matheus`) para consolidar refatorações e correções que atravessavam múltiplas funcionalidades, como a unificação dos sistemas de formulário e as melhorias de qualidade de código.
 
 ### Nomenclatura de commits
 
@@ -371,9 +412,9 @@ git commit -m "Implementa sistema de login closes #7"
 
 ### Pull Requests
 
-- PRs de `feature/*` vão para `sprint-2`
-- PRs de `sprint-2` vão para `main` ao fim da sprint
+- PRs de `feature/*`, `fix/*` e branches individuais (ex.: `sprint-3-nome`) vão para `sprint-3`
+- PRs de `sprint-3` vão para `main` ao fim da sprint
 
 ---
 
-_Última atualização: Sprint 2 — 2026.1_
+_Última atualização: Sprint 3 — 2026.1_
